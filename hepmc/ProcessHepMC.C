@@ -14,9 +14,18 @@
 #include <TBenchmark.h>
 #include <TCanvas.h>
 
-void ProcessHepMCDDVCS(const std::string infile="/w/work5/home/garyp/eic/Farm/data/EpIC_DDVCS_ee_18x275/rootfiles/18x275_ddvcs_edecay_hplus.root", const std::string outfile="tempout.root"){
+void ProcessHepMC(const std::string infile="/w/work5/home/garyp/eic/Farm/data/EpIC_DDVCS_ee_18x275/rootfiles/18x275_ddvcs_edecay_hplus.root", 
+		       const std::string outfile="tempout.root", 
+		       const int beam_ele_idx=0, 
+		       const int beam_ion_idx=3, 
+		       const int scat_ele_idx=1, 
+		       const int scat_ion_idx=5, 
+		       const int lep_plus_idx=6, 
+		       const int lep_minus_idx=7)
+{
+  
   // Enable implicit multi-threading
-  //ROOT::EnableImplicitMT(4);
+  ROOT::EnableImplicitMT(8);
  
   using namespace rad::names::data_type; //for MC()
   
@@ -29,22 +38,23 @@ void ProcessHepMCDDVCS(const std::string infile="/w/work5/home/garyp/eic/Farm/da
   
   //Assign particles names and indices
   //indicing comes from ordering in hepmc file
-  hepmc.setBeamIonIndex(3);
-  hepmc.setBeamElectronIndex(0);
-  hepmc.setScatElectronIndex(1);
+  hepmc.setBeamIonIndex(beam_ion_idx);
+  hepmc.setBeamElectronIndex(beam_ele_idx);
+  hepmc.setScatElectronIndex(scat_ele_idx);
   
-  hepmc.setParticleIndex("pprime",5);
+  hepmc.setParticleIndex("pprime",scat_ion_idx);
   hepmc.setBaryonParticles({"pprime"});
   
   //if using existing lepton pair
-  //create gprime first from their sums
+  //create gprime/jpsi from their sums
   rad::config::ParticleCreator particles{hepmc};
-  hepmc.setParticleIndex("ele",6);
-  hepmc.setParticleIndex("pos",7);
+  hepmc.setParticleIndex("ele",lep_plus_idx);
+  hepmc.setParticleIndex("pos",lep_minus_idx);
   particles.Sum("gprime",{"ele","pos"});
   
   //use ParticleGenerator to decay gprime to 2 M_ele particles ele,pos
-  //hepmc.setParticleIndex("gprime",4);//
+  //now migrated to GenHeli.C
+  //hepmc.setParticleIndex("gprime",4);
   // rad::generator::ParticleGenerator gen{hepmc};
   // gen.GenerateTwoBody({"ele0","pos0"},
   // 		      {rad::constant::M_ele(),rad::constant::M_ele()},
