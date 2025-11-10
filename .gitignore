@@ -40,8 +40,9 @@
 # debug information files
 *.dwo
 
-# pdf analysis output
+# analysis output
 *.pdf
+*.png
 
 # temporary files
 *~
