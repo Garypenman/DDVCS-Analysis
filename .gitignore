@@ -43,6 +43,7 @@
 # analysis output
 *.pdf
 *.png
+*.dot
 
 # temporary files
 *~
