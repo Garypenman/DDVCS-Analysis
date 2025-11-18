@@ -42,10 +42,14 @@ void MakeRADHistos(rad::histo::Histogrammer &histo){
   
   histo.Create<TH1D,ROOT::RVecD>({"allP","momentum of all particles",100,0,100},{"pmag"});
   // histo.Create<TH1D,ROOT::RVecD>({"eleP","momentum of electrons",100,0,100},{"elsP"});
-    
-  //check recoil proton azimuthal distribution
+  
   histo.Create<TH1D,double>({"scatele_phi","Azimuthal Angle of Scattered Electron",250,-TMath::Pi(),TMath::Pi()},{"phi[scat_ele]"});
-  histo.Create<TH1D,double>({"pprime_phi","Azimuthal Angle of Recoil Proton",250,-TMath::Pi(),TMath::Pi()},{"phi[pprime]"});
+  
+  //recoil proton
+  histo.Create<TH1D,double>({"pprime_pmag","Momentum of Recoil Proton",100,0,275},{"pmag[pprime]"});
+  histo.Create<TH1D,double>({"pprime_eta","Pseudorapidity of Recoil Proton",100,-10,10},{"eta[pprime]"});
+  histo.Create<TH1D,double>({"pprime_theta","Polar Angle of Recoil Proton",100,-TMath::Pi(),TMath::Pi()},{"theta[pprime]"});
+  histo.Create<TH1D,double>({"pprime_phi","Azimuthal Angle of Recoil Proton",100,-TMath::Pi(),TMath::Pi()},{"phi[pprime]"});
   
   //for brufit need
   //CM_Phi Heli_theta Heli_phi GammaPolCirc=sqrt(1-epsilon)*Pol t GammaE

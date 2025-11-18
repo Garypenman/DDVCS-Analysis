@@ -35,6 +35,18 @@ void DrawRADHistos(rad::histo::Histogrammer &histo){
   histo.DrawSame("tbot",gPad);
   c001->Print("temp001.pdf");
 
+  TCanvas *c002 = new TCanvas("c002","Recoil Proton");
+  c002->Divide(2,2);
+  c002->cd(1)->SetLogy();
+  histo.DrawSame("pprime_pmag",gPad);
+  c002->cd(2);
+  histo.DrawSame("pprime_eta",gPad);
+  c002->cd(3);
+  histo.DrawSame("pprime_theta",gPad);
+  c002->cd(4);
+  histo.DrawSame("pprime_phi",gPad);
+  c002->Print("temp002.pdf");
+
   //histo.DrawSame("ttop",gPad);
   
   TCanvas *c01 = new TCanvas("c01","Exclusivity Plots");
