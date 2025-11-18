@@ -20,54 +20,71 @@
 #include "../include/MakeRADHistos.h"
 #include "../include/DrawRADHistos.h"
 #include "../include/FileProcessing.h"
+//#include "../include/DetectorAssociations.h"
 
-void ProcessMCMatched(std::vector<std::string> infiles={"/w/work5/home/garyp/eic/Farm/EpIC_DDVCS_ee_18x275/recon/18x275_ddvcs_edecay_hminus_0_recon.root"},
-		      std::string outfile="/w/work5/home/garyp/rad_trees/MCMatched_ddvcs_ee_18x275_minus.root",
-		      const int scat_ele_idx=0, 
-		      const int scat_ion_idx=1, 
-		      const int lep_minus_idx=2, 
-		      const int lep_plus_idx=3,
-		      const int lep_PDG=11)
+void ProcessMCRecon(std::vector<std::string> infiles={"/w/work5/home/garyp/eic/Farm/EpIC_DDVCS_ee_18x275/recon/18x275_ddvcs_edecay_hminus_0_recon.root"}, 
+		    std::string outfile="/w/work5/home/garyp/rad_trees/MCRecon_ddvcs_ee_18x275.root",
+		    const int scat_ele_idx=0, 
+		    const int scat_ion_idx=1, 
+		    const int lep_minus_idx=2, 
+		    const int lep_plus_idx=3,
+		    const int lep_PDG=11)
 {
   using namespace rad::names::data_type; //for Rec(), Truth()
   
   gBenchmark->Start("df");
   
-  ROOT::EnableImplicitMT(8);
+  //ROOT::EnableImplicitMT(8);
   rad::config::ePICReaction epic{"events", infiles };
-   
-  epic.SetBeamsFromMC(); //for this file 0=ebeam 3=pbeam
-  epic.AliasColumnsAndMatchWithMC();
+  epic.SetBeamsFromMC();
+  epic.AliasColumnsAndMC();
+  // epic.FixBeamElectronMomentum(0,0,-18);
+  // epic.FixBeamIonMomentum(0,0,275,rad::constant::M_pro());
+  
+  
+  //epic.setScatElectronIndex(rad::indice::useNthOccurance(1,11),{"rec_pid"});
+  //epic.setParticleIndex("pprime",rad::indice::useNthOccurance(1,2212),{"rec_pid"});
+  //epic.setParticleIndex("ele",rad::indice::useNthOccurance(2,11),{"rec_pid"});
+  //epic.setParticleIndex("pos",rad::indice::useNthOccurance(1,-11),{"rec_pid"});
   
   epic.setScatElectronIndex(scat_ele_idx);
   epic.setParticleIndex("pprime",scat_ion_idx,2212);
   epic.setParticleIndex("ele",lep_minus_idx,lep_PDG);
   epic.setParticleIndex("pos",lep_plus_idx,-lep_PDG);
   
-  rad::epic::ePICParticleModifier p_modifier(epic);
+  // rad::epic::ePICParticleModifier p_modifier(epic);
   rad::epic::ePICParticleCreator  p_creator(epic);
   
   epic.Particles().Sum("gprime",{"ele","pos"});
-  p_creator.MCMatchedFarForwardProton("pprime");
+  p_creator.FarForwardProton("pprime");
   
   //create recoil proton from missing 4-vector, e-' and gamma
   epic.Particles().Miss("calc_pprime",{rad::names::ScatEle().data(),"gprime"});
-  p_modifier.FixMassTo("calc_pprime",rad::constant::M_pro());
-  p_modifier.Apply("calc_pprimeMass");
+  // p_modifier.FixMassTo("calc_pprime",rad::constant::M_pro());
+  // p_modifier.Apply("calc_pprimeMass");
   
   epic.setMesonParticles({"ele","pos"});
   epic.setBaryonParticles({"pprime"});
   
   epic.makeParticleMap();
   
-  // rad::rdf::PrintParticles(epic,Truth());
-  // rad::rdf::PrintParticles(epic,Rec());
+  //rad::rdf::PrintParticles(epic,Truth());
+  //rad::rdf::PrintParticles(epic,Rec());
   
+  // MakeDetectorAssociations(epic);
+
   ApplyKinematics(epic);
   
+  //filters to fix seg faulting
+  //epic.Define("ff_Nproton",Form("rad::helpers::Count(rec_pid,2212)"));
+  //epic.Filter("(rec_Nele>1)*(rec_Npos>0)*(rec_Npro>0)","recon_filter");
+  //epic.Filter("(rec_Nele>1)*(rec_Npos>0)*(rec_pmag[pprime]>0)","recon_filter");
+  //epic.Filter("(rec_Nele>1)*(rec_Npos>0)*(ff_Nproton>0)","recon_filter");
+  
   //Define subsets of particles and corresponing variables to plot
-  epic.Define("electrons","rad::helpers::PositionsWhere(tru_pid==11)");
+  //epic.Define("electrons","rad::helpers::PositionsWhere(tru_pid==11)");
   //epic.Define(Truth()+"elsP",Form("Take(%spmag,electrons)",Truth().data()));
+  //ClusterSums(epic);
   
   //Define histograms
   rad::histo::Histogrammer histo{"set1",epic};
@@ -83,23 +100,10 @@ void ProcessMCMatched(std::vector<std::string> infiles={"/w/work5/home/garyp/eic
   gBenchmark->Stop("processing");
   gBenchmark->Print("processing");
 
-  //save all histograms to file
-  //histo.File("histograms.root");
+  // //save all histograms to file
+  // //histo.File("histograms.root");
 
   gBenchmark->Stop("df");
   gBenchmark->Print("df");
-  
+    
 }
-
-// void ProcessMCMatchedDDVCS(){
-  
-//   std::string plus_infilename =  "/w/work5/home/garyp/eic/Farm/EpIC_ep_DDVCS_18x275/recon/18x275_ddvcs_1M_events_plus_flat_0_recon.root";
-//   std::string minus_infilename =  "/w/work5/home/garyp/eic/Farm/EpIC_ep_DDVCS_18x275/recon/18x275_ddvcs_1M_events_minus_flat_0_recon.root";
-  
-//   std::string plus_outfilename = "MCMatchedDDVCS_plus.root";
-//   std::string minus_outfilename = "MCMatchedDDVCS_minus.root";
-  
-//   EventLoop(plus_infilename, plus_outfilename);
-//   EventLoop(minus_infilename, minus_outfilename);
-  
-// }

@@ -1,4 +1,4 @@
-#include "ePICReaction.h"
+#include "ePICDetectorReaction.h"
 #include "ParticleCreator.h"
 #include "ParticleGenerator.h"
 #include "ParticleModifier.h"
@@ -20,33 +20,37 @@
 #include "../include/MakeRADHistos.h"
 #include "../include/DrawRADHistos.h"
 #include "../include/FileProcessing.h"
+#include "../include/DetectorAssociations.h"
 
-void ProcessMCMatched(std::vector<std::string> infiles={"/w/work5/home/garyp/eic/Farm/EpIC_DDVCS_ee_18x275/recon/18x275_ddvcs_edecay_hminus_0_recon.root"},
-		      std::string outfile="/w/work5/home/garyp/rad_trees/MCMatched_ddvcs_ee_18x275_minus.root",
-		      const int scat_ele_idx=0, 
-		      const int scat_ion_idx=1, 
-		      const int lep_minus_idx=2, 
-		      const int lep_plus_idx=3,
-		      const int lep_PDG=11)
+void ProcessMCMatchedDetector(std::vector<std::string> infiles={"/w/work5/home/garyp/eic/Farm/EpIC_DDVCS_ee_18x275/recon/18x275_ddvcs_edecay_hminus_0_recon.root"},
+			      std::string outfile="/w/work5/home/garyp/rad_trees/MCMatchedDetector_ddvcs_ee_18x275_minus.root",
+			      const int scat_ele_idx=0, 
+			      const int scat_ion_idx=1, 
+			      const int lep_minus_idx=2, 
+			      const int lep_plus_idx=3,
+			      const int lep_PDG=11)
 {
+  
   using namespace rad::names::data_type; //for Rec(), Truth()
   
   gBenchmark->Start("df");
   
   ROOT::EnableImplicitMT(8);
-  rad::config::ePICReaction epic{"events", infiles };
+  rad::config::ePICDetectorReaction epic{"events", infiles };
    
   epic.SetBeamsFromMC(); //for this file 0=ebeam 3=pbeam
   epic.AliasColumnsAndMatchWithMC();
   
   epic.setScatElectronIndex(scat_ele_idx);
   epic.setParticleIndex("pprime",scat_ion_idx,2212);
+  
   epic.setParticleIndex("ele",lep_minus_idx,lep_PDG);
   epic.setParticleIndex("pos",lep_plus_idx,-lep_PDG);
   
   rad::epic::ePICParticleModifier p_modifier(epic);
   rad::epic::ePICParticleCreator  p_creator(epic);
   
+  // p_creator.Sum("gprime",{"ele","pos"});
   epic.Particles().Sum("gprime",{"ele","pos"});
   p_creator.MCMatchedFarForwardProton("pprime");
   
@@ -63,11 +67,14 @@ void ProcessMCMatched(std::vector<std::string> infiles={"/w/work5/home/garyp/eic
   // rad::rdf::PrintParticles(epic,Truth());
   // rad::rdf::PrintParticles(epic,Rec());
   
+  MakeDetectorAssociations(epic);
+
   ApplyKinematics(epic);
   
   //Define subsets of particles and corresponing variables to plot
   epic.Define("electrons","rad::helpers::PositionsWhere(tru_pid==11)");
   //epic.Define(Truth()+"elsP",Form("Take(%spmag,electrons)",Truth().data()));
+  ClusterSums(epic);
   
   //Define histograms
   rad::histo::Histogrammer histo{"set1",epic};
