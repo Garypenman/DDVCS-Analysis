@@ -9,3 +9,13 @@ void MakeOutputPDF(const std::string outfile){
   gSystem->Exec("rm temp*.pdf");
   
 }
+
+bool checkFileExists(const std::string &filename) {
+  if (gSystem->AccessPathName(filename.c_str())) {
+        std::cout << "File does NOT exist: " << filename << std::endl;
+	return false;
+    } else {
+        std::cout << "File exists: " << filename << std::endl;
+	return true;
+    }
+}

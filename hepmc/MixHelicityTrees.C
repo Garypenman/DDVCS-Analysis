@@ -17,6 +17,7 @@
 #include <TBenchmark.h>
 #include <TCanvas.h>
 
+#include "../include/FileProcessing.h"
 #include "ProcessHepMCDDVCS.C"
 
 std::vector<Long64_t> unique_random_indices(Long64_t total, Long64_t pick, UInt_t seed) {
@@ -30,15 +31,6 @@ std::vector<Long64_t> unique_random_indices(Long64_t total, Long64_t pick, UInt_
     return indices;
 }
 
-bool checkFileExists(const std::string &filename) {
-  if (gSystem->AccessPathName(filename.c_str())) {
-        std::cout << "File does NOT exist: " << filename << std::endl;
-	return false;
-    } else {
-        std::cout << "File exists: " << filename << std::endl;
-	return true;
-    }
-}
 
 void ShuffleTree(const std::string &infile, const std::string &outfile, const std::string &treename) {
     // Open input file & tree
