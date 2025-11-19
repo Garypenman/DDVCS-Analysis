@@ -57,6 +57,10 @@ void RunCampaignFiles(std::string campaign="25.10.3",
     
     if(reac=="jpsi"){
       helicities = {""};
+      scat_ele_idx = edm4hep_eslight_scat_ele_idx;
+      scat_ion_idx = edm4hep_eslight_scat_ion_idx;
+      lep_minus_idx = edm4hep_eslight_lep_minus_idx;
+      lep_plus_idx = edm4hep_eslight_lep_plus_idx;
     }
 
     for (auto& decay : decays){
@@ -91,25 +95,20 @@ void RunCampaignFiles(std::string campaign="25.10.3",
 	    outputfile.replace(pos, 6, ".root"); // 6 = length of "_.root"
 	  }
 	  
-	  auto files = rad::files::GetXRootDFiles(redirector,xrdfsPath,extension,nfiles);
-  	  
-	  if (files.empty() == true){
-	    std::cout << "No files for " + xrdfsPath + "! Skipping." << std::endl;
-	    continue;
+	  if(!checkFileExists(outputfile)){
+	    //std::cout << "Input path: " << files[0] << std::endl;
+	    std::cout << "Processing files for " + outputfile << "\n" << std::endl;
+	    auto files = rad::files::GetXRootDFiles(redirector,xrdfsPath,extension,nfiles);
+	    
+	    if (files.empty() == true){
+	      std::cout << "No files for " + xrdfsPath + "! Skipping." << std::endl;
+	      continue;
+	    }
+	    
+	    task.func(files, outputfile,scat_ele_idx, scat_ion_idx, lep_minus_idx, lep_plus_idx, pdg);
 	  }
-	  
-	  //std::cout << "Input path: " << files[0] << std::endl;
-  	  std::cout << "Processing files for " + outputfile << "\n" << std::endl;
-  	  task.func(files, outputfile,scat_ele_idx, scat_ion_idx, lep_minus_idx, lep_plus_idx, pdg);
-	
   	}
       }
     }
-  }
-  
-  //ProcessMCMatched(files, outfile);
-  //ProcessMCMatchedDetector(files, outfile);
-  //ProcessMCRecon(files, outfile);
-  //ProcessMCReconDetector(files, outfile);
-  
+  }  
 }
