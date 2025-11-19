@@ -52,11 +52,10 @@ void ProcessMCRecon(std::vector<std::string> infiles={"/w/work5/home/garyp/eic/F
   epic.setParticleIndex("ele",lep_minus_idx,lep_PDG);
   epic.setParticleIndex("pos",lep_plus_idx,-lep_PDG);
   
-  // rad::epic::ePICParticleModifier p_modifier(epic);
+  rad::epic::ePICParticleModifier p_modifier(epic);
   rad::epic::ePICParticleCreator  p_creator(epic);
   
   epic.Particles().Sum("gprime",{"ele","pos"});
-  p_creator.FarForwardProton("pprime");
   
   //create recoil proton from missing 4-vector, e-' and gamma
   epic.Particles().Miss("calc_pprime",{rad::names::ScatEle().data(),"gprime"});
@@ -68,6 +67,16 @@ void ProcessMCRecon(std::vector<std::string> infiles={"/w/work5/home/garyp/eic/F
   
   epic.makeParticleMap();
   
+  //get proton from rp detectors
+  //this needs to come after make particle map to work
+  p_creator.RomanPotProton("RPproton");
+  p_modifier.OverwriteRecParticle("pprime","rec_RPproton");
+  p_modifier.Apply("GetRPproton");
+  //this needs to come after make particle map to work
+  p_creator.B0Proton("B0proton");
+  p_modifier.OverwriteRecParticle("pprime","rec_B0proton");
+  p_modifier.Apply("GetB0proton");
+
   //rad::rdf::PrintParticles(epic,Truth());
   //rad::rdf::PrintParticles(epic,Rec());
   

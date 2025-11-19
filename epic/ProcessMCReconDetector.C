@@ -23,7 +23,7 @@
 #include "../include/DetectorAssociations.h"
 
 void ProcessMCReconDetector(std::vector<std::string> infiles={"/w/work5/home/garyp/eic/Farm/EpIC_DDVCS_ee_18x275/recon/18x275_ddvcs_edecay_hminus_0_recon.root"}, 
-			    std::string outfile="/w/work5/home/garyp/rad_trees/MCReconDetector_ddvcs_ee_18x275.root",
+			    std::string outfile="/w/work5/home/garyp/rad_trees/MCReconDetector_ddvcs_ee_18x275_hminus.root",
 			    const int scat_ele_idx=0, 
 			    const int scat_ion_idx=1, 
 			    const int lep_minus_idx=2, 
@@ -52,11 +52,10 @@ void ProcessMCReconDetector(std::vector<std::string> infiles={"/w/work5/home/gar
   epic.setParticleIndex("ele",lep_minus_idx,lep_PDG);
   epic.setParticleIndex("pos",lep_plus_idx,-lep_PDG);
   
-  // rad::epic::ePICParticleModifier p_modifier(epic);
+  rad::epic::ePICParticleModifier p_modifier(epic);
   rad::epic::ePICParticleCreator  p_creator(epic);
   
   epic.Particles().Sum("gprime",{"ele","pos"});
-  p_creator.FarForwardProton("pprime");
   
   //create recoil proton from missing 4-vector, e-' and gamma
   epic.Particles().Miss("calc_pprime",{rad::names::ScatEle().data(),"gprime"});
@@ -67,6 +66,16 @@ void ProcessMCReconDetector(std::vector<std::string> infiles={"/w/work5/home/gar
   epic.setBaryonParticles({"pprime"});
   
   epic.makeParticleMap();
+  
+  //get proton from rp detectors
+  //this needs to come after make particle map to work
+  p_creator.RomanPotProton("RPproton");
+  p_modifier.OverwriteRecParticle("pprime","rec_RPproton");
+  p_modifier.Apply("GetRPproton");
+  //this needs to come after make particle map to work
+  p_creator.B0Proton("B0proton");
+  p_modifier.OverwriteRecParticle("pprime","rec_B0proton");
+  p_modifier.Apply("GetB0proton");
   
   //rad::rdf::PrintParticles(epic,Truth());
   //rad::rdf::PrintParticles(epic,Rec());
