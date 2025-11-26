@@ -35,7 +35,7 @@ void RunCampaignFiles(std::string campaign="25.10.3",
   // Build the list with derived names
   std::vector<Task> tasks = {
     //Task(ProcessMCMatched, "MCMatched"),
-    Task(ProcessMCMatchedDetector, "MCMatchedDetector"),
+    //Task(ProcessMCMatchedDetector, "MCMatchedDetector"),
     //Task(ProcessMCRecon, "MCRecon"),
     Task(ProcessMCReconDetector, "MCReconDetector")
   };

@@ -27,7 +27,7 @@ void ProcessHepMC(const std::string infile="/w/work5/home/garyp/eic/Farm/data/Ep
   
   gBenchmark->Start("Total");
   
-  ROOT::EnableImplicitMT(8);
+  //ROOT::EnableImplicitMT(8);
   rad::config::HepMCElectro hepmc{"hepmc3_tree", infile };
   
   hepmc.AliasMomentumComponents();
@@ -63,6 +63,8 @@ void ProcessHepMC(const std::string infile="/w/work5/home/garyp/eic/Farm/data/Ep
   hepmc.makeParticleMap();
   //rad::rdf::PrintParticles(hepmc,MC());
   
+  hepmc.Define("UID","rdfentry_");
+
   ApplyKinematics(hepmc);
   
   //Define histograms

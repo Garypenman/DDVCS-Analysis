@@ -18,7 +18,7 @@
 #include <TCanvas.h>
 
 #include "../include/FileProcessing.h"
-#include "ProcessHepMCDDVCS.C"
+#include "ProcessHepMC.C"
 
 std::vector<Long64_t> unique_random_indices(Long64_t total, Long64_t pick, UInt_t seed) {
     std::vector<Long64_t> indices(total);
@@ -85,10 +85,10 @@ void DFMerge(const std::string plus_file, const std::string minus_file, const st
   
   // Step 1: Add helicity and thread-safe RNG
   auto df_plus_heli = df_plus.Define("egen_helicity", "1")
-    .Define("rand", [] { return rad::random::Generator().Rndm(); }).Define("UID","rdfentry_");
+    .Define("rand", [] { return rad::random::Generator().Rndm(); });
   
   auto df_minus_heli = df_minus.Define("egen_helicity", "-1")
-    .Define("rand", [] { return rad::random::Generator().Rndm(); }).Define("UID","rdfentry_");
+    .Define("rand", [] { return rad::random::Generator().Rndm(); });
   
   
   // Step 2: calculate asym n+ and n-
@@ -195,18 +195,27 @@ void MixHelicityTrees(std::string filebase="/w/work5/home/garyp/eic/Farm/data/Ep
   std::string minus_flat_outfile = outdir+basename+"_minus_flat.root";
   
   if(!checkFileExists(plus_outfile))
-    ProcessHepMCDDVCS(plus_file, plus_outfile);
+    ProcessHepMC(plus_file, plus_outfile);
   
   if(!checkFileExists(minus_outfile))
-    ProcessHepMCDDVCS(minus_file, minus_outfile);
+    ProcessHepMC(minus_file, minus_outfile);
   
   if(!checkFileExists(plus_flat_outfile))
-    ProcessHepMCDDVCS(plus_flat_file, plus_flat_outfile);
+    ProcessHepMC(plus_flat_file, plus_flat_outfile);
   
   if(!checkFileExists(minus_flat_outfile))
-    ProcessHepMCDDVCS(minus_flat_file, minus_flat_outfile);
+    ProcessHepMC(minus_flat_file, minus_flat_outfile);
   
+  std::string ab_plusfile = "/w/work5/home/garyp/eic/Farm/data/EpIC_DDVCS_ee_18x275/afterburned/ab_18x275_ddvcs_edecay_hplus.root"; 
+  std::string ab_minusfile = "/w/work5/home/garyp/eic/Farm/data/EpIC_DDVCS_ee_18x275/afterburned/ab_18x275_ddvcs_edecay_hplus.root"; 
+  std::string ab_plusoutfile = "/w/work5/home/garyp/rad_trees/AB_"+basename+"_plus.root"; 
+  std::string ab_minusoutfile = "/w/work5/home/garyp/rad_trees/AB_"+basename+"_minus.root";; 
   
+  if(!checkFileExists(ab_plusoutfile))
+    ProcessHepMC(ab_plusfile, ab_plusoutfile);
+  if(!checkFileExists(ab_minusoutfile))
+    ProcessHepMC(ab_minusfile, ab_minusoutfile);
+
   std::string mixed_outfile = outdir+basename+"_mixed.root";
   std::string mixed_flat_outfile = outdir+basename+"_mixed_flat.root";
   
