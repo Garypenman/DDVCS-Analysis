@@ -18,6 +18,10 @@
 # Debugger Files
 *.pdb
 
+# Automatically compiled library headers
+*_C_ACLiC_*
+*AutoDict_*
+
 # Compiled Dynamic libraries
 *.so
 *.dylib
