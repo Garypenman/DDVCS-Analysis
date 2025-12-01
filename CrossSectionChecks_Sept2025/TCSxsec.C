@@ -1,8 +1,15 @@
-#include "/home/garyp/eic/epic-rad/examples/EPICStyle.C"
+#include "/home/garyp/eic/epic_plot_macro/ePIC_style.C"
+#include "/home/garyp/eic/EPICStyle/EPICStyle.C"
+
 void TCSxsec(){
   
-  SetEPICStyle();
-  
+  set_ePIC_style(); //official epic
+  //SetEPICStyle(); //my version
+  //style corrections needed for official epic
+  gStyle->SetOptTitle(0);
+  gStyle->SetOptFit(0);
+  gStyle->SetPadRightMargin(0.1);
+
   double tcs_sig[10] = {5.64, 4.83, 5.03, 6.60, 4.97, 5.95, 6.32, 5.64, 6.43, 4.68};
   double tcs_unc[10] = {0.85, 0.61, 0.26, 1.29, 0.30, 0.52, 0.75, 0.66, 2.21, 0.36};
   
