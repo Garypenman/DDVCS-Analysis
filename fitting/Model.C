@@ -27,7 +27,11 @@ void Model(FitManager& fm, Int_t Nevents=1){
   
   //Bethe Heitler term
   //fm.SetUp().LoadFormula("BH_TH=(1 + TMath::Cos(@mc_Heli_Phi[])*TMath::Cos(@mc_Heli_Theta))/(TMath::Sin(@mc_Heli_Theta[])*TMath::Sin(@mc_Heli_Theta[]))");
-  
+  f.SetUp().LoadFormula("Qp2=(@mc_GMass[] * @mc_GMass[])");
+  f.SetUp().LoadFormula("t=@mc_t_bot[]");
+  f.SetUp().LoadFormula("s=@Mp[]*@Mp[] + 2*@Mp*@mc_y[]*@Erest[] - @mc_Q2[]");
+  f.SetUp().LoadFormula("C1 = @beta[] * (@Qp2[] * (@s[] - @Mp[]*@Mp[] - @Qp2[])  + @t[] * (@s[] - @Mp[]*@Mp[] + @Qp2[])) / @r[]");
+  f.SetUp().LoadFormula("L=(@Qp2[] - @t[]) - ");
   fm.SetUp().LoadFormula("BH_TH=(1 + TMath::Cos(@mc_Heli_Theta[])*TMath::Cos(@mc_Heli_Theta[]))/(TMath::Sin(@mc_Heli_Theta[])*TMath::Sin(@mc_Heli_Theta[]))");
 
   ///)/(-TMath::Cos(@mc_Heli_Theta[]) + TMath::Sin(@mc_Heli_Theta[])*TMath::Cos(@mc_Heli_Phi[]))
@@ -37,9 +41,9 @@ void Model(FitManager& fm, Int_t Nevents=1){
   /****************************************/
   fm.SetUp().LoadParameter("BH[0.0,0,1]");
   fm.SetUp().LoadParameter("ImM[0.0,0,1]");
-  fm.SetUp().LoadParameter("ReM[0.0,0,1]");
-  fm.SetUp().LoadParameter("ImM2[0.0,0,1]");
-  fm.SetUp().LoadParameter("ReM2[0.0,0,1]");
+  // fm.SetUp().LoadParameter("ReM[0.0,0,1]");
+  // fm.SetUp().LoadParameter("ImM2[0.0,0,1]");
+  // fm.SetUp().LoadParameter("ReM2[0.0,0,1]");
   fm.SetUp().LoadParameter("TCS[0.0,0,1]");
   //fm.SetUp().LoadParameter("INT[0,0,1]");
   
@@ -49,7 +53,7 @@ void Model(FitManager& fm, Int_t Nevents=1){
  //Constrain Total contribution ==1
   fm.SetUp().LoadFormula("INT=(1 - @BH[] - @TCS[])");
   //fm.SetUp().LoadFormula("ImMTOT=(@ImM[]*@ImM + @ImM2[]*@ImM2[])");
-  //fm.SetUp().LoadFormula("ReMTOT=TMath::Sqrt(1 - @ImMTOT[]*@ImM[]TOT)");
+  fm.SetUp().LoadFormula("ReM=TMath::Sqrt(1 - @ImM[]*@ImM[])");
   //fm.SetUp().LoadFormula("@ReM[]*@ReM[] + @ReM2[]*@ReM2[] + @ImM[]*@ImM + @ImM2[]*@ImM2[] = 1");
   
   // fm.SetUp().SetIDBranchName("UID");

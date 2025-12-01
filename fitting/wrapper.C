@@ -19,10 +19,13 @@ void wrapper(){
   double BH[N],ImM[N],ImM2[N],ReM[N],ReM2[N],TCS[N];
   for (int i=0; i<N; i++){
     BH[i] = 1.0;
+    
     ImM[i] = 0.5;
-    ImM2[i] = 0.1;
-    ReM[i] = 0.5;
-    ReM2[i] = sqrt(1-ImM[i]*ImM[i] - ImM2[i]*ImM2[i] - ReM[i]*ReM[i]);
+    
+    //ImM2[i] = 0.1;
+    //ReM[i] = 0.5;
+    //ReM2[i] = sqrt(1-ImM[i]*ImM[i] - ImM2[i]*ImM2[i] - ReM[i]*ReM[i]);
+    
     TCS[i] = 0.0;
     
     ToyMaker(nev,BH[i],ImM[i],ImM2[i],ReM[i],ReM2[i],TCS[i]);
