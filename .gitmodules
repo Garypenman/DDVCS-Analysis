@@ -1,0 +1,3 @@
+[submodule "TCS-ePIC-preTDR"]
+	path = TCS-ePIC-preTDR
+	url = git@github.com:Garypenman/TCS-ePIC-preTDR.git
