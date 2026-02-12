@@ -1,7 +1,7 @@
 #pragma once
 #include "Model.C"
 
-void ToyMaker(int nev=10000, double BH=0.5, double ImM=0.3, double ImM2=0.3, double ReM=0.3, double ReM2=0.3, double TCS=0.1){
+void ToyMaker(int nev=10000, double BH=0.5, double ImM = 0.5, double TCS=0.1){
   //Start from large file of "flat/phase space" events
   //TString sigfile  = "flat/Toy0.root";
   //TString treename = "ToyData";
@@ -35,9 +35,6 @@ void ToyMaker(int nev=10000, double BH=0.5, double ImM=0.3, double ImM2=0.3, dou
   /**************************************************/
   toyman.SetUp().SetParVal("BH",BH); //Bethe Heitler contribution
   toyman.SetUp().SetParVal("ImM",ImM); //Imaginery part of M (ReM^2 =1-ImM^2)
-  // toyman.SetUp().SetParVal("ImM2",ImM2);
-  toyman.SetUp().SetParVal("ReM",ReM);
-  // toyman.SetUp().SetParVal("ReM2",ReM2);
   toyman.SetUp().SetParVal("TCS",TCS); //TCS contribution
  
   /**************************************************/
