@@ -7,8 +7,10 @@ void wrapper(){
   tex.SetNDC();
   tex.SetTextSize(0.04);
   
-  int nev=20000;
+  int nev=1000;
+  double th_cut = 0.8;
   TCut mc_theta_cut = "mc_Heli_Theta>pi/4 && mc_Heli_Theta<3*pi/4";
+  //TCut mc_theta_cut = Form("mc_Heli_CosTheta>-%f && mc_Heli_CosTheta<%f",th_cut,th_cut);
   int N=1;
   int nrows=(sqrt(N+2));
   int ncols = ceil( (N+2) / nrows);
@@ -16,19 +18,14 @@ void wrapper(){
   TH1D *hth[N];
   TH1D *hph[N];
   TH2D *h2d_cth_ph[N];
-  double BH[N],ImM[N],ImM2[N],ReM[N],ReM2[N],TCS[N];
+  double BH[N],ImM[N],ReM[N],TCS[N];
   for (int i=0; i<N; i++){
     BH[i] = 1.0;
-    
     ImM[i] = 0.5;
-    
-    //ImM2[i] = 0.1;
     //ReM[i] = 0.5;
-    //ReM2[i] = sqrt(1-ImM[i]*ImM[i] - ImM2[i]*ImM2[i] - ReM[i]*ReM[i]);
-    
     TCS[i] = 0.0;
     
-    ToyMaker(nev,BH[i],ImM[i],ImM2[i],ReM[i],ReM2[i],TCS[i]);
+    ToyMaker(nev,BH[i],ImM[i],TCS[i]);
     TFile *f = new TFile("toys_test/Toy0.root","OPEN");
     TTree *T = (TTree*)f->Get("ToyData");
     hth[i] = new TH1D(Form("hth_%i",i),"",100,-1,1);
@@ -36,11 +33,15 @@ void wrapper(){
     h2d_cth_ph[i] = new TH2D(Form("h2d_cth_ph_%i",i),"",100,-M_PI,M_PI,100,-1,1);
     h2d_cth_ph[i]->SetTitle("Brufit Toy Amplitudes;#phi_{ee} [rad];cos(#theta_{ee})");
     T->Draw(Form("cos(mc_Heli_Theta)>>hth_%i",i),mc_theta_cut,"goff");
+    //T->Draw(Form("mc_Heli_CosTheta>>hth_%i",i),mc_theta_cut,"goff");
     T->Draw(Form("mc_Heli_Phi>>hph_%i",i),mc_theta_cut,"goff");
     T->Draw(Form("cos(mc_Heli_Theta):mc_Heli_Phi>>h2d_cth_ph_%i",i),mc_theta_cut,"goff");
+    //T->Draw(Form("mc_Heli_CosTheta:mc_Heli_Phi>>h2d_cth_ph_%i",i),mc_theta_cut,"goff");
+  
   }
   
-  auto max=550;
+  auto max=hth[0]->GetMaximum();
+  //auto max=550;
   auto min=0;
   TFile *fphys = new TFile("/w/work5/home/garyp/rad_trees/HepMC_ddvcs_ee_18x275_mixed.root");
   TTree *Tphys = (TTree*)fphys->Get("rad_tree");
@@ -55,11 +56,11 @@ void wrapper(){
     hth[i]->SetMaximum(max);
     hth[i]->Draw();
     tex.DrawLatex(0.3,0.8,Form("BH = %1.2f",BH[i]));
-    tex.DrawLatex(0.3,0.75,Form("ImM-- = %1.2f",ImM[i]));
-    tex.DrawLatex(0.55,0.75,Form("ImM0- = %1.2f",ImM2[i]));
-    tex.DrawLatex(0.3,0.7,Form("ReM-- = %1.2f",ImM[i]));
-    tex.DrawLatex(0.55,0.7,Form("ReM0- = %1.2f",ImM2[i]));
-    tex.DrawLatex(0.3,0.65,Form("TCS = %1.2f",TCS[i]));
+    tex.DrawLatex(0.3,0.75,Form("ImM = %1.2f",ImM[i]));
+    //tex.DrawLatex(0.55,0.75,Form("ImM0- = %1.2f",ImM2[i]));
+    //tex.DrawLatex(0.3,0.7,Form("ReM-- = %1.2f",ReM[i]));
+    //tex.DrawLatex(0.55,0.7,Form("ReM0- = %1.2f",ImM2[i]));
+    tex.DrawLatex(0.3,0.7,Form("TCS = %1.2f",TCS[i]));
     
   }
   cth->cd(N+1);
@@ -92,11 +93,11 @@ void wrapper(){
     hph[i]->SetMaximum(max);
     hph[i]->Draw();
     tex.DrawLatex(0.3,0.8,Form("BH = %1.2f",BH[i]));
-    tex.DrawLatex(0.3,0.75,Form("ImM-- = %1.2f",ImM[i]));
-    tex.DrawLatex(0.55,0.75,Form("ImM0- = %1.2f",ImM2[i]));
-    tex.DrawLatex(0.3,0.7,Form("ReM-- = %1.2f",ImM[i]));
-    tex.DrawLatex(0.55,0.7,Form("ReM0- = %1.2f",ImM2[i]));
-    tex.DrawLatex(0.3,0.65,Form("TCS = %1.2f",TCS[i]));
+    tex.DrawLatex(0.3,0.75,Form("ImM = %1.2f",ImM[i]));
+    //tex.DrawLatex(0.55,0.75,Form("ImM0- = %1.2f",ImM2[i]));
+    //tex.DrawLatex(0.3,0.7,Form("ReM-- = %1.2f",ReM[i]));
+    //tex.DrawLatex(0.55,0.7,Form("ReM0- = %1.2f",ReM2[i]));
+    tex.DrawLatex(0.3,0.7,Form("TCS = %1.2f",TCS[i]));
     
   }
   cph->cd(N+1);

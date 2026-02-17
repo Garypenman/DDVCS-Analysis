@@ -31,8 +31,8 @@
   /********************Make bins*********************/ 
   /**************************************************/
   
-  Double_t tbinLimits[] = {0,0.01,0.1,1.}; // tbins
-  fm.Bins().LoadBinVar("mc_t_bot",3,tbinLimits);			  
+  //Double_t tbinLimits[] = {0,0.01,0.1,1.}; // tbins
+  //fm.Bins().LoadBinVar("mc_t_bot",3,tbinLimits);			  
 
   /**************************************************/
   /****************Load data and MC******************/
