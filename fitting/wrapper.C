@@ -7,10 +7,11 @@ void wrapper(){
   tex.SetNDC();
   tex.SetTextSize(0.04);
   
-  int nev=1000;
+  int nev=5e5;
   double th_cut = 0.8;
-  TCut mc_theta_cut = "mc_Heli_Theta>pi/4 && mc_Heli_Theta<3*pi/4";
-  //TCut mc_theta_cut = Form("mc_Heli_CosTheta>-%f && mc_Heli_CosTheta<%f",th_cut,th_cut);
+  //TCut mc_theta_cut = "mc_Heli_Theta>pi/4 && mc_Heli_Theta<3*pi/4";
+  TCut mc_theta_cut = Form("mc_Heli_CosTheta>-%f && mc_Heli_CosTheta<%f",th_cut,th_cut);
+  
   int N=1;
   int nrows=(sqrt(N+2));
   int ncols = ceil( (N+2) / nrows);
@@ -32,12 +33,12 @@ void wrapper(){
     hph[i] = new TH1D(Form("hph_%i",i),"",100,-M_PI,M_PI);
     h2d_cth_ph[i] = new TH2D(Form("h2d_cth_ph_%i",i),"",100,-M_PI,M_PI,100,-1,1);
     h2d_cth_ph[i]->SetTitle("Brufit Toy Amplitudes;#phi_{ee} [rad];cos(#theta_{ee})");
-    T->Draw(Form("cos(mc_Heli_Theta)>>hth_%i",i),mc_theta_cut,"goff");
-    //T->Draw(Form("mc_Heli_CosTheta>>hth_%i",i),mc_theta_cut,"goff");
+    //T->Draw(Form("cos(mc_Heli_Theta)>>hth_%i",i),mc_theta_cut,"goff");
+    T->Draw(Form("mc_Heli_CosTheta>>hth_%i",i),mc_theta_cut,"goff");
     T->Draw(Form("mc_Heli_Phi>>hph_%i",i),mc_theta_cut,"goff");
-    T->Draw(Form("cos(mc_Heli_Theta):mc_Heli_Phi>>h2d_cth_ph_%i",i),mc_theta_cut,"goff");
-    //T->Draw(Form("mc_Heli_CosTheta:mc_Heli_Phi>>h2d_cth_ph_%i",i),mc_theta_cut,"goff");
-  
+    //T->Draw(Form("cos(mc_Heli_Theta):mc_Heli_Phi>>h2d_cth_ph_%i",i),mc_theta_cut,"goff");
+    T->Draw(Form("mc_Heli_CosTheta:mc_Heli_Phi>>h2d_cth_ph_%i",i),mc_theta_cut,"goff");
+    
   }
   
   auto max=hth[0]->GetMaximum();
@@ -83,7 +84,7 @@ void wrapper(){
   hBH_theta->SetMaximum(max);
   hBH_theta->Draw("hist");
   tex.DrawLatex(0.3,0.65,"EpIC BH");
-  
+  cth->Print("cth.pdf");
 
   TCanvas *cph = new TCanvas();
   cph->Divide(ncols,nrows);
@@ -121,6 +122,7 @@ void wrapper(){
   hBH_phi->SetMaximum(max);
   hBH_phi->Draw("hist");
   tex.DrawLatex(0.3,0.65,"EpIC BH");
+  cph->Print("phi.pdf");
   
   TCanvas *c2D = new TCanvas();
   c2D->Divide(ncols,nrows);
@@ -139,5 +141,7 @@ void wrapper(){
   TBH->Draw("cos(mc_Heli_Theta):mc_Heli_Phi>>h2d_BH_cth_ph",mc_theta_cut,"goff");
   //new TCanvas();
   h2d_BH_cth_ph->Draw("colz");
+
+  c2D->Print("2D.pdf");
   
 }

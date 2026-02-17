@@ -5,7 +5,6 @@ void Model(FitManager& fm, Int_t Nevents=1){
   /*************Load Variables*************/    
   /****************************************/
   //Watch theta limits!!! cannot go to 0 as discontinuity
-  //Watch theta limits!!! cannot go to 0 as discontinuity
   fm.SetUp().LoadVariable(Form("mc_Heli_Theta[%lf,%lf]",TMath::Pi()/10,TMath::Pi()*9/10));
   fm.SetUp().LoadVariable(Form("mc_Heli_Phi[-%lf,%lf]",TMath::Pi(),TMath::Pi()));
   fm.SetUp().LoadVariable(Form("mc_GammaPolCirc[0,-1,1]"));
@@ -24,7 +23,7 @@ void Model(FitManager& fm, Int_t Nevents=1){
   //fixed params
   fm.SetUp().LoadParameter("me[0.000511]");
   fm.SetUp().LoadParameter("Mp[0.938]");
-  
+
   /****************************************/
   /*************Load Formula*************/    
   /****************************************/
@@ -38,7 +37,6 @@ void Model(FitManager& fm, Int_t Nevents=1){
   fm.SetUp().LoadFormula("r2=(@mc_s_photo[] - @Qp2[] - @Mp[]*@Mp[])*(@mc_s_photo[] - @Qp2[] - @Mp[]*@Mp[]) - (4*@Qp2[]*@Mp[]*@Mp[])");
   fm.SetUp().LoadFormula("r=TMath::Sqrt(@r2[])");
   
-  
   //TCS only term
   fm.SetUp().LoadFormula("TCS_TH=1+TMath::Cos(@mc_Heli_Theta[])*TMath::Cos(@mc_Heli_Theta[])");
 
@@ -49,12 +47,14 @@ void Model(FitManager& fm, Int_t Nevents=1){
   
   //Bethe Heitler term
   //coefficients for full leading "L" term in BH
+  //fm.SetUp().LoadFormula("BH_TH=(1 + TMath::Cos(@mc_Heli_Phi[])*TMath::Cos(@mc_Heli_Theta))/(TMath::Sin(@mc_Heli_Theta[])*TMath::Sin(@mc_Heli_Theta[]))");
+  //coefficients for full leading "L" term in BH
   fm.SetUp().LoadFormula("C0=@beta[] * @r[]");
-  fm.SetUp().LoadFormula("C1=@beta[] * ( (@Qp2[]*(@mc_s_photo[] - @Mp[]*@Mp[] - @Qp2[])) + (@tbot[]*(@mc_s_photo[] - @Mp[]*@Mp[] + @Qp2[])) ) / @r[]");
-  fm.SetUp().LoadFormula("C2= (-2) * @beta[] * (@mc_s_photo[] - @Mp[]*@Mp[]) * @mc_GMass[] * @mc_DeltaT[] / @r[]");
+  fm.SetUp().LoadFormula("C1=@beta[] * ( (@Qp2[]*(@s[] - @Mp[]*@Mp[] - @Qp2[])) + (@tbot[]*(@s[] - @Mp[]*@Mp[] + @Qp2[])) ) / @r[]");
+  fm.SetUp().LoadFormula("C2= (-2) * @beta[] * (@s[] - @Mp[]*@Mp[]) * @mc_GMass[] * @mc_DeltaT[] / @r[]");
   //fm.SetUp().LoadFormula("C1=1");
   //fm.SetUp().LoadFormula("C2=-1");
-           
+  
   fm.SetUp().LoadFormula("b=(@C1[] * TMath::Cos(@mc_Heli_Theta[])) + (@C2[] * TMath::Sin(@mc_Heli_Theta[]) * TMath::Cos(@mc_Heli_Phi[]))");
   fm.SetUp().LoadFormula("b2=(@b[] * @b[])");
   fm.SetUp().LoadFormula("L=((@Qp2[] - @tbot[])*(@Qp2[] - @tbot[]) - @b2[])/4");
@@ -64,13 +64,13 @@ void Model(FitManager& fm, Int_t Nevents=1){
   //fm.SetUp().LoadFormula("BH_TH=(1 + TMath::Cos(@mc_Heli_Theta[])*TMath::Cos(@mc_Heli_Theta[]))/(TMath::Sin(@mc_Heli_Theta[])*TMath::Sin(@mc_Heli_Theta[]))");
   
   //1/L with cosTheta terms
-  fm.SetUp().LoadFormula("BH_TH=(1 / @L[])*(1 + TMath::Cos(@mc_Heli_Theta[])*TMath::Cos(@mc_Heli_Theta[]))");
+  //fm.SetUp().LoadFormula("BH_TH=(1 / @L[])*(1 + TMath::Cos(@mc_Heli_Theta[])*TMath::Cos(@mc_Heli_Theta[]))");
   
   //only 1/L 
-  //fm.SetUp().LoadFormula("BH_TH=(1 / @L[])");
+  fm.SetUp().LoadFormula("BH_TH=(1 / @L[])");
   
   //Full by-hand expansion of 1/L without C1,C2 coefficients
-  //fm.SetUp().LoadFormula("BH_TH=(1 + TMath::Cos(@mc_Heli_Theta[])*TMath::Cos(@mc_Heli_Theta[]))/(TMath::Sin(@mc_Heli_Theta[])*TMath::Sin(@mc_Heli_Theta[]) * (1 + TMath::Cos(@mc_Heli_Phi[])*TMath::Cos(@mc_Heli_Phi[]) - TMath::Cos(@mc_Heli_Phi[])/TMath::Tan(@mc_Heli_Theta[])))");
+  //fm.SetUp().LoadFormula("BH_TH=(1 + TMath::Cos(@mc_Heli_Theta[])*TMath::Cos(@mc_Heli_Theta[]))/(TMath::Sin(@mc_Heli_Theta[])*TMath::Sin(@mc_Heli_Theta[]))");
   
   /****************************************/
   /*************Load Parameters************/    
@@ -94,10 +94,8 @@ void Model(FitManager& fm, Int_t Nevents=1){
   /****************************************/
   /*************Make model PDF*************/ //DONE
   /****************************************/
-  //fm.SetUp().FactoryPDF("RooComponentsPDF::Dilepton(0,{Theta,Phi,Pol},=BH;BH_TH:TCS;TCS_TH:INT;ReM;INT_TH;INT_COSPHI:INT;ImM;INT_TH;INT_hSINPHI)"); 
   fm.SetUp().FactoryPDF("RooComponentsPDF::Dilepton(0,{mc_Heli_Theta,mc_Heli_Phi,mc_GammaPolCirc},=BH;BH_TH)");
   //fm.SetUp().FactoryPDF("RooComponentsPDF::Dilepton(0,{mc_GammaPolCirc,mc_Heli_Phi,mc_Heli_Theta,mc_s_photo,mc_GMass,mc_t_bot,mc_DeltaT},=BH;BH_TH)");
-  fm.SetUp().LoadSpeciesPDF("Dilepton",Nevents);
 }
 
 void Model(){
