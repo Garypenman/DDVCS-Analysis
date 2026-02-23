@@ -38,7 +38,7 @@ void MakeRADHistos(rad::histo::Histogrammer &histo){
   histo.Create<TH1D,double>({"missTheta","#theta_{miss}(e',#gamma',p')",100,0,1},{"MissTheta"});
   
   //semi-exclusivity
-  histo.Create<TH1D,double>({"MissMassPprime","Mmiss {e,p'}[GeV]",100,.3,5.},{"MissMassPprime"});
+  histo.Create<TH1D,double>({"MissMass_pprime","Mmiss {e,p'}[GeV]",100,.3,5.},{"MissMass_pprime"});
   
   histo.Create<TH1D,ROOT::RVecD>({"allP","momentum of all particles",100,0,100},{"pmag"});
   // histo.Create<TH1D,ROOT::RVecD>({"eleP","momentum of electrons",100,0,100},{"elsP"});

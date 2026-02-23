@@ -35,10 +35,17 @@ void ApplyKinematics(rad::config::ConfigReaction &cr){
   rad::rdf::MissPt(cr,"MissPt","{scat_ele,pprime,gprime}");
   rad::rdf::MissPz(cr,"MissPz","{scat_ele,pprime,gprime}");
   rad::rdf::MissTheta(cr,"MissTheta","{scat_ele,pprime,gprime}");
-  rad::rdf::MissMass(cr,"MissMassPprime","{scat_ele,pprime}");
+  
+  //missing proton
+  rad::rdf::MissMass(cr,"MissMass_pprime","{scat_ele,gprime}");
+  rad::rdf::MissP(cr,"MissP_pprime","{scat_ele,gprime}");
+  rad::rdf::MissPt(cr,"MissPt_pprime","{scat_ele,gprime}");
+  rad::rdf::MissPz(cr,"MissPz_pprime","{scat_ele,gprime}");
+  rad::rdf::MissTheta(cr,"MissTheta_pprime","{scat_ele,gprime}");
   
   //decay angles
   rad::rdf::gn2s0s0s12::HelicityAngles(cr,"Heli");
+  rad::rdf::gn2s0s0s12::PhiTrento(cr);
   //photon polarisation
   rad::rdf::PolGammaStar(cr,"GammaPol");
   rad::rdf::CircPolGammaStar(cr,"GammaPolCirc");
