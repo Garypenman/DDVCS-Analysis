@@ -7,7 +7,7 @@ void wrapper(){
   tex.SetNDC();
   tex.SetTextSize(0.04);
   
-  int nev=5e5;
+  int nev=1e5;
   double th_cut = 0.8;
   //TCut mc_theta_cut = "mc_Heli_Theta>pi/4 && mc_Heli_Theta<3*pi/4";
   TCut mc_theta_cut = Form("mc_Heli_CosTheta>-%f && mc_Heli_CosTheta<%f",th_cut,th_cut);
