@@ -144,7 +144,7 @@ void DFMerge(const std::string plus_file, const std::string minus_file, const st
   gBenchmark->Stop("Filter");
   gBenchmark->Print("Filter");
   
-  vector<std::string> brufit_cols = {"UID","mc_t_bot","mc_GammaPolCirc","mc_GammaE","mc_Heli_Phi","mc_Heli_Theta","mc_Heli_CosTheta","mc_CM_Phi","mc_CM_Theta"};
+  vector<std::string> brufit_cols = {"UID","mc_t_bot","mc_t_top","mc_GammaPolCirc","mc_GammaE","mc_Heli_Phi","mc_Heli_Theta","mc_Heli_CosTheta","mc_CM_Phi","mc_CM_Theta","mc_Q2","mc_GMass","mc_s_photo","mc_DeltaT"};
   
   gBenchmark->Start("Snapshots");
   auto df_plus_plus_snap = df_plus_plus.Define("pol",[pol] { return pol; }).Define("pol_helicity","1").Redefine("mc_GammaPolCirc","mc_GammaPolCirc*pol").Snapshot(treename,"plus_plus_snap_test.root",brufit_cols);
@@ -195,10 +195,21 @@ void MixHelicityTrees(std::string filebase="/w/work5/home/garyp/eic/Farm/data/Ep
   std::string minus_flat_outfile = outdir+basename+"_minus_flat.root";
   
   if(!checkFileExists(plus_outfile))
-    ProcessHepMC(plus_file, plus_outfile);
+    ProcessHepMC(plus_file, plus_outfile,
+		 epic_scat_ele_idx,
+		 epic_scat_ion_idx,
+		 epic_lep_minus_idx,
+		 epic_lep_plus_idx,
+		 11);
   
   if(!checkFileExists(minus_outfile))
-    ProcessHepMC(minus_file, minus_outfile);
+    ProcessHepMC(minus_file, minus_outfile,
+		 epic_scat_ele_idx,
+		 epic_scat_ion_idx,
+		 epic_lep_minus_idx,
+		 epic_lep_plus_idx,
+		 11);
+  
   
   if(!checkFileExists(plus_flat_outfile))
     ProcessHepMC(plus_flat_file, plus_flat_outfile);

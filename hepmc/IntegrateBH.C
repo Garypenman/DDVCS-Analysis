@@ -206,7 +206,7 @@ double MakeEvent(double Ebeam, double Pbeam, double Q2, double y, double Qp2, do
   auto jacob_dx_dy = xbj / y;
   photo_flux = photo_flux * jacob_dx_dy;
     
-  double d4sigma = dsigma_BH(s4,Qp2, t, thetaL, phiL, delt_T);
+  double d4sigma = dsigma_BH(s4,Qp2, t, thetaL, phiL);
   if (d4sigma<=0){
     //cout << "Unphysical d4sigma value" << endl;
     return 0.0;

@@ -67,6 +67,33 @@ void ProcessHepMC(const std::string infile="/w/work5/home/garyp/eic/Farm/data/Ep
 
   ApplyKinematics(hepmc);
   
+  using ROOT::VecOps::RVec;
+  using ROOT::Math::PxPyPzMVector;
+  using ROOT::Math::VectorUtil::boost;
+  
+  hepmc.Define("mc_s_electro",[](RVec<double>px,RVec<double>py,RVec<double>pz,RVec<double>m,int eidx, int pidx){
+      PxPyPzMVector ebeam(px[eidx],py[eidx],pz[eidx],m[eidx]);
+      PxPyPzMVector pbeam(px[pidx],py[pidx],pz[pidx],m[pidx]);
+      return (ebeam + pbeam).M2();
+    },{"mc_px","mc_py","mc_pz","mc_m",rad::names::BeamEle().data(),rad::names::BeamIon().data()});
+
+  hepmc.Define("mc_s_photo",[](RVec<double>px,RVec<double>py,RVec<double>pz,RVec<double>m,int eidx, int scatidx, int pidx){
+      PxPyPzMVector ebeam(px[eidx],py[eidx],pz[eidx],m[eidx]);
+      PxPyPzMVector escat(px[scatidx],py[scatidx],pz[scatidx],m[scatidx]);
+      PxPyPzMVector pbeam(px[pidx],py[pidx],pz[pidx],m[pidx]);
+      auto q = ebeam-escat;
+      return (q + pbeam).M2();
+    },{"mc_px","mc_py","mc_pz","mc_m",rad::names::BeamEle().data(),rad::names::ScatEle().data(),rad::names::BeamIon().data()});
+  
+  hepmc.Define("mc_DeltaT",[](RVec<double>px,RVec<double>py,RVec<double>pz,RVec<double>m,int pidx, int ppidx){
+      PxPyPzMVector p(px[pidx],py[pidx],pz[pidx],m[pidx]);
+      PxPyPzMVector pp(px[ppidx],py[ppidx],pz[ppidx],m[ppidx]);
+      auto delta =  (pp-p);
+      auto deltaT = sqrt(delta.Perp2());
+      return deltaT;
+    },{"mc_px","mc_py","mc_pz","mc_m",rad::names::BeamIon().data(),"pprime"});
+  
+  
   //Define histograms
   rad::histo::Histogrammer histo{"set1",hepmc};
   histo.Init({MC()});

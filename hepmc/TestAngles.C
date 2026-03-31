@@ -26,20 +26,20 @@ void TestAngles(kin thekin=eic){
   auto boost_to_tar = p.BoostToCM();
   e = boost(e,boost_to_tar);
   
-  auto E=e.E();
+  auto Erest=e.E();
   
   auto y = thekin.y;
   auto t = -thekin.t;
   auto Qp2 = 2.0;
   
   auto Q2 = y*y*me*me/(1-y);
-  auto s = M*M + 2*M*y*E - Q2;
+  auto s_electro = M*M + 2*M*y*Erest - Q2;
   
   auto phiS = 0.0;
   auto phi = 0.0;
   
   cout << "E(tar rest), y, Q2, t, s, Qp2, phiS, phi" << endl;
-  cout << E << " " << y << " " << Q2 << " " << t << " " << s << " " << Qp2 << " " << phiS << " " << phi << " " << endl;
+  cout << Erest << " " << y << " " << Q2 << " " << t << " " << s << " " << Qp2 << " " << phiS << " " << phi << " " << endl;
   cout << "Will randomly generate phiL and cos(thetaL) uniformly!" << endl;
   
   TH1D *hCosTheta_gen = new TH1D("hCosTheta_gen","Generated;cos(#theta_{l})",100,-1,1);
@@ -51,7 +51,7 @@ void TestAngles(kin thekin=eic){
   TH2D *hCosTheta_Phi = new TH2D("hCosTheta_Phi","Weighted d^{4}_{BH};phi_{l} [rad];cos(#theta_{l})",100,-M_PI,M_PI,100,-1,1);
   
   
-  TH1D *ht_gen = new TH1D("ht_gen","Generated;|t| [GeV^{2}]",100,0,1);
+  TH1D *ht_gen = new TH1D("ht_gen","Generated;|t| [GeV^{2}]",100,-1,-1);
   TH1D *hy_gen = new TH1D("hy_gen","Generated;y",100,0,1);
   TH1D *hQp2_gen = new TH1D("hQp2_gen","Generated;Q'^{2} = M_{ee}^{2} [GeV^{2}] ",100,0,20);
   TH1D *hs_gen = new TH1D("hs_gen","Generated;s [GeV^{2}]",100,-1,-1);
@@ -67,14 +67,22 @@ void TestAngles(kin thekin=eic){
     
     //y = rand.Uniform(0,1);
     //y = rand.expo(0.3);
+    
+    s = M*M + 2*M*y*Erest - Q2;
+    double costhetaCM = rand.Uniform(-1,1);
+    //calc t from this
+    double W = sqrt(s);
+    double k =(W*W - M*M)/(2*W);
+    double kp = (W*W - M*M - Qp2)/(2*W);
+    double E = sqrt(M*M + k*k);
+    double Ep = sqrt(M*M + kp*kp);
+    t = 2*M*M - 2*(E*Ep - k*kp*costhetaCM);
+    //cout << "t = " << t << endl;
     //t = rand.Uniform(0,1);
     //t = -t;
-    //Qp2 = rand.Uniform(2.0, 18.0);
-    //Qp2 = 100.0;
-    Q2 = y*y*me*me/(1-y);
-    s = M*M + 2*M*y*E - Q2;
-  
-    auto costheta = rand.Uniform(-1,1);
+    
+    
+    auto costheta = rand.Uniform(-0.8,0.8);
     auto phi = rand.Uniform(-M_PI,M_PI);
     hCosTheta_gen->Fill(costheta);
     hPhi_gen->Fill(phi);
@@ -85,9 +93,9 @@ void TestAngles(kin thekin=eic){
     hs_gen->Fill(s);
     
     auto theta = std::acos(costheta);
-    auto sig = dsigma_BH(s,Qp2,t,theta,phi);
+     auto sig = dsigma_BH(s,Qp2,t,theta,phi);
     if(sig<0 || std::isnan(sig)) {
-      //cout << "problem" << endl;
+      //cout << "problem, skipping event! sigma = " << sig << endl;
       continue;
     }
     hCosTheta->Fill(costheta,sig);
