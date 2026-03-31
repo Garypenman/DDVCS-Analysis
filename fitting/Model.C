@@ -9,10 +9,10 @@ void Model(FitManager& fm, Int_t Nevents=10000){
   fm.SetUp().LoadVariable(Form("mc_PhiHel[-%lf,%lf]",TMath::Pi(),TMath::Pi()));
   fm.SetUp().LoadVariable(Form("mc_GammaPolCirc[0,-1,1]"));
   
-  fm.SetUp().LoadVariable("mc_Qp[1.6,0,10]");
-  fm.SetUp().LoadVariable("mc_s_photo[1000,0,20000]");
-  fm.SetUp().LoadVariable("mc_t_bot[0.01,0,2]");
-  fm.SetUp().LoadVariable("mc_DeltaT[0.01,0,2]");
+  fm.SetUp().LoadVariable("mc_Qp[2,1.5,10]");
+  fm.SetUp().LoadVariable("mc_s_photo[100,6,20000]");
+  fm.SetUp().LoadVariable("mc_t_bot[0.01,0.0001,2]");
+  fm.SetUp().LoadVariable("mc_DeltaT[0.01,0.0001,2]");
   
   //fm.SetUp().LoadParameter("mc_Qp[1.5]");
   //fm.SetUp().LoadParameter("mc_s_photo[1000]");
@@ -84,8 +84,10 @@ void Model(FitManager& fm, Int_t Nevents=10000){
   //1/L with cosTheta terms and kinematic prefactor
   //fm.SetUp().LoadFormula("BH_TH=(@BHprefac[]*@beta[] / (-1*@tbot[]*@L[])) * (1 + TMath::Cos(@mc_ThetaHel[])*TMath::Cos(@mc_ThetaHel[]))");
   
-  fm.SetUp().LoadFormula("BHF1=@BHprefac[] * (@A[]/(-1*@tbot[]) + @B[]/2)");
-  fm.SetUp().LoadFormula("BHF2=@BHprefac[] * (@A[]/(4*@Mp[]*@Mp[]) + @B[]/2)");
+  fm.SetUp().LoadFormula("BHF1A=@BHprefac[] * @A[]/(-1*@tbot[])");
+  fm.SetUp().LoadFormula("BHF1B=@BHprefac[] * @B[]/2");
+  fm.SetUp().LoadFormula("BHF2A=@BHprefac[] * @A[]/(4*@Mp[]*@Mp[])");
+  fm.SetUp().LoadFormula("BHF2B=@BHprefac[] * @B[]/2");
   fm.SetUp().LoadFormula("BHF1F2=@BHprefac[] * @B[]");
   
   //Full by-hand expansion of 1/L without C1,C2 coefficients
@@ -129,12 +131,12 @@ void Model(FitManager& fm, Int_t Nevents=10000){
   /****************************************/
   /*************Make model PDF*************/
   /****************************************/
-  //fm.SetUp().FactoryPDF("RooComponentsPDF::Dilepton(0,{mc_ThetaHel,mc_PhiHel,mc_GammaPolCirc},=BH;BH_TH)");
+  //fm.SetUp().FactoryPDF("BruComponentsPDF::Dilepton(0,{mc_ThetaHel,mc_PhiHel,mc_GammaPolCirc},=BH;BH_TH)");
   
   //BH Only
-  fm.SetUp().FactoryPDF("RooComponentsPDF::Dilepton(0,{mc_GammaPolCirc,mc_PhiHel,mc_ThetaHel,mc_s_photo,mc_Qp,mc_t_bot,mc_DeltaT},=F1;BHF1:F2;BHF2:F1F2;BHF1F2)");
+  fm.SetUp().FactoryPDF("BruComponentsPDF::Dilepton(0,{mc_GammaPolCirc,mc_PhiHel,mc_ThetaHel,mc_s_photo,mc_Qp,mc_t_bot,mc_DeltaT},=F1;BHF1A:F1;BHF1B:F2;BHF2A:F2;BHF2B:F1F2;BHF1F2)");
   //BH+TCS+INT
-  //fm.SetUp().FactoryPDF("RooComponentsPDF::Dilepton(0,{mc_GammaPolCirc,mc_PhiHel,mc_ThetaHel,mc_s_photo,mc_Qp,mc_t_bot,mc_DeltaT},=BH;BH_A1:TCS;TCS_TH:INT;ReM;INT_TH;INT_COSPHI:INT;ImM;INT_TH;INT_hSINPHI)");
+  //fm.SetUp().FactoryPDF("BruComponentsPDF::Dilepton(0,{mc_GammaPolCirc,mc_PhiHel,mc_ThetaHel,mc_s_photo,mc_Qp,mc_t_bot,mc_DeltaT},=BH;BH_A1:TCS;TCS_TH:INT;ReM;INT_TH;INT_COSPHI:INT;ImM;INT_TH;INT_hSINPHI)");
   
   fm.SetUp().LoadSpeciesPDF("Dilepton",Nevents);
 }

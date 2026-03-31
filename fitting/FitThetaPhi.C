@@ -41,15 +41,20 @@
   /**************************************************/
 
   fm.LoadData("tree",datafile);
+  //fm.LoadData("tree",sigfile);
    //"Dilepton" is given in Model.C as name of the RooComponentsPDF
-  fm.LoadSimulated("tree",sigfile,"Dilepton");
+  fm.LoadSimulated("tree",datafile,"Dilepton");
+  //fm.LoadSimulated("tree",sigfile,"Dilepton");
 
   /**************************************************/
   /***********Choose minimiser and run***************/ 
   /**************************************************/
   //number of CPUs to split likelihood calc.
   //fm.SetUp().AddFitOption(RooFit::NumCPU(4)); 
+  //std::vector<Int_t> Niters,Int_t Nburn, Float_t norm,float target,float accmin,float accmax
+  auto mcmc=new BruMcmcCovariance({5000,20000,10000},100,1,0.23,0.16,0.3);
+  fm.SetMinimiser(mcmc);
   Here::Go(&fm);
- 
+  //Multi::Go(&fm,10);
   
 }
