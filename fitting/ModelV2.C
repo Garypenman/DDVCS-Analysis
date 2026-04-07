@@ -1,4 +1,4 @@
-void Model(FitManager& fm, Int_t Nevents=10000){
+void ModelV2(FitManager& fm, Int_t Nevents=10000){
 
 
   /****************************************/
@@ -9,10 +9,10 @@ void Model(FitManager& fm, Int_t Nevents=10000){
   fm.SetUp().LoadVariable(Form("mc_PhiHel[-%lf,%lf]",TMath::Pi(),TMath::Pi()));
   fm.SetUp().LoadVariable(Form("mc_GammaPolCirc[0,-1,1]"));
   
-  fm.SetUp().LoadVariable("mc_Qp[2,1.5,10]");
+  fm.SetUp().LoadVariable("mc_Qp[2,1.5,5]");
   fm.SetUp().LoadVariable("mc_s_photo[100,6,20000]");
-  fm.SetUp().LoadVariable("mc_t_bot[0.01,0.0001,2]");
-  fm.SetUp().LoadVariable("mc_DeltaT[0.01,0.0001,2]");
+  fm.SetUp().LoadVariable("mc_t_bot[0.01,0.0001,1]");
+  fm.SetUp().LoadVariable("mc_DeltaT[0.01,0.0001,1]");
   
   // fm.SetUp().LoadConstant("mc_Qp[2]");
   // fm.SetUp().LoadConstant("mc_s_photo[100]");
@@ -72,8 +72,6 @@ void Model(FitManager& fm, Int_t Nevents=10000){
   fm.SetUp().LoadFormula("B1=@b2[]");
   fm.SetUp().LoadFormula("B2=8*@me[]*@me[]*@Qp2[]");
   fm.SetUp().LoadFormula("B3=4*@me[]*@me[]*(@tbot[]+2*@me[]*@me[])*(@Qp2[]-@tbot[])*(@Qp2[]-@tbot[])/@L[]");
-  //ignore further terms in m_l
-  //fm.SetUp().LoadFormula("B2=
   fm.SetUp().LoadFormula("B=@B0[]+@B1[]+@B2[]-@B3[]");
 
   //approx form with no phi dependence
@@ -92,7 +90,15 @@ void Model(FitManager& fm, Int_t Nevents=10000){
   fm.SetUp().LoadFormula("BHF2B=@BHprefac[] * @B[]/2");
   fm.SetUp().LoadFormula("BHF1F2=@BHprefac[] * @B[]");
   
+  //Brufit code would be something like
+  // Load a single angle parameter alpha
+  fm.SetUp().LoadParameter("alpha[0.0,-1.57,1.57]"); // Limits roughly -pi/2 to pi/2
   
+  // Define the trigonometric weights (there is a nice symmetry to this!)
+  fm.SetUp().LoadFormula("wF1sq=(TMath::Cos(@alpha[]) * TMath::Cos(@alpha[]))");
+  fm.SetUp().LoadFormula("wF2sq=(TMath::Sin(@alpha[]) * TMath::Sin(@alpha[]))");
+  fm.SetUp().LoadFormula("wF1F2=(TMath::Cos(@alpha[]) * TMath::Sin(@alpha[]))");
+ 
   
   //TCS only term
   //fm.SetUp().LoadFormula("TCSprefac=@alpha3[] / (8*@pi[]*@mc_s_photo[]*@mc_s_photo[])");
@@ -108,8 +114,8 @@ void Model(FitManager& fm, Int_t Nevents=10000){
   /*************Load Parameters************/    
   /****************************************/
   //fm.SetUp().LoadParameter("BH[1.0,0.0,1]");
-  fm.SetUp().LoadParameter("F1[0.5,0.01,1]");
-  fm.SetUp().LoadParameter("F2[0.5,0.01,1.7928]");
+  // fm.SetUp().LoadParameter("F1[0.5,0.01,1]");
+  // fm.SetUp().LoadParameter("F2[0.5,0.01,1.7928]");
   //fm.SetUp().LoadParameter("F1F2[0.0,0.0,1]");
   
   //fm.SetUp().LoadParameter("ImM[0.0,0,1]");
@@ -121,7 +127,7 @@ void Model(FitManager& fm, Int_t Nevents=10000){
  //Constrain Total contribution ==1
   //fm.SetUp().LoadFormula("INT=(1 - @BH[] - @TCS[])");
   //fm.SetUp().LoadFormula("ReM=TMath::Sqrt(1 - @ImM[]*@ImM[])");
-  fm.SetUp().LoadFormula("F1F2=(TMath::Sqrt(@F1[])*TMath::Sqrt(@F2[]))");
+  //fm.SetUp().LoadFormula("F1F2=(TMath::Sqrt(@F1[])*TMath::Sqrt(@F2[]))");
   
   auto& formulas = fm.SetUp().Formulas();
   formulas.Print("v");
@@ -136,14 +142,18 @@ void Model(FitManager& fm, Int_t Nevents=10000){
   //fm.SetUp().FactoryPDF("BruComponentsPDF::Dilepton(0,{mc_GammaPolCirc,mc_PhiHel,mc_ThetaHel,mc_s_photo,mc_Qp,mc_t_bot,mc_DeltaT},=BH;BH_TH)");
   
   //BH Only
-  fm.SetUp().FactoryPDF("BruComponentsPDF::Dilepton(0,{mc_GammaPolCirc,mc_PhiHel,mc_ThetaHel,mc_s_photo,mc_Qp,mc_t_bot,mc_DeltaT},=F1;BHF1A:F1;BHF1B:F2;BHF2A:F2;BHF2B:F1F2;BHF1F2)");
+  //fm.SetUp().FactoryPDF("BruComponentsPDF::Dilepton(0,{mc_GammaPolCirc,mc_PhiHel,mc_ThetaHel,mc_s_photo,mc_Qp,mc_t_bot,mc_DeltaT},=F1;BHF1A:F1;BHF1B:F2;BHF2A:F2;BHF2B:F1F2;BHF1F2)");
   //fm.SetUp().FactoryPDF("BruComponentsPDF::Dilepton(0,{mc_GammaPolCirc,mc_PhiHel,mc_ThetaHel,mc_s_photo,mc_Qp,mc_t_bot,mc_DeltaT},=F1;BHF1A)");
   
   //BH+TCS+INT
   //fm.SetUp().FactoryPDF("BruComponentsPDF::Dilepton(0,{mc_GammaPolCirc,mc_PhiHel,mc_ThetaHel,mc_s_photo,mc_Qp,mc_t_bot,mc_DeltaT},=BH;BH_A1:TCS;TCS_TH:INT;ReM;INT_TH;INT_COSPHI:INT;ImM;INT_TH;INT_hSINPHI)");
+
+
+  // Apply them to the PDF
+  fm.SetUp().FactoryPDF("BruComponentsPDF::Dilepton(0,{mc_GammaPolCirc,mc_PhiHel,mc_ThetaHel,mc_s_photo,mc_Qp,mc_t_bot,mc_DeltaT},=wF1sq;BHF1A:wF1sq;BHF1B:wF2sq;BHF2A:wF2sq;BHF2B:wF1F2;BHF1F2)");
   
   fm.SetUp().LoadSpeciesPDF("Dilepton",Nevents);
 }
 
-void Model(){
+void ModelV2(){
 }
