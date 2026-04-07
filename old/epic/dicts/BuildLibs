@@ -1,0 +1,11 @@
+#!/bin/bash
+#mkdir -p BuildLibs
+#cd BuildLibs
+
+# Generate dictionary
+rootcling -f libRVecRVecDict.cxx -rmf libRVecRVecDict.rootmap -rml libRVecRVecDict.so -I$(root-config --incdir) Types.h LinkDef.h
+#rootcling -f libRVecRVecDict.cxx -rmf libRVecRVecDict.rootmap -rml libRVecRVecDict.so Types.h LinkDef.h
+
+# Compile shared library
+g++ -shared -fPIC libRVecRVecDict.cxx $(root-config --cflags --libs) -o libRVecRVecDict.so
+#g++ -shared -fPIC libRVecRVecDict.cxx -o libRVecRVecDict.so

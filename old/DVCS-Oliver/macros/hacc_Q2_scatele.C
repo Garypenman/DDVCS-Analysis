@@ -1,0 +1,101 @@
+#ifdef __CLING__
+#pragma cling optimize(0)
+#endif
+void hacc_Q2_scatele()
+{
+//=========Macro generated from canvas: hacc_Q2_scatele/
+//=========  (Fri Feb  6 17:08:48 2026) by ROOT version 6.38.00
+   TCanvas *hacc_Q2_scatele = new TCanvas("hacc_Q2_scatele", "", 0, 0, 700, 500);
+   gStyle->SetOptFit(0);
+   gStyle->SetOptStat(0);
+   gStyle->SetOptTitle(0);
+   TColor::SetPalette(57, nullptr);
+   hacc_Q2_scatele->Range(-1.538462,-0.1445783,11.28205,1.060241);
+   hacc_Q2_scatele->SetFillColor(0);
+   hacc_Q2_scatele->SetBorderMode(0);
+   hacc_Q2_scatele->SetBorderSize(2);
+   hacc_Q2_scatele->SetLeftMargin(0.12);
+   hacc_Q2_scatele->SetTopMargin(0.05);
+   hacc_Q2_scatele->SetBottomMargin(0.12);
+   hacc_Q2_scatele->SetFrameBorderMode(0);
+   hacc_Q2_scatele->SetFrameBorderMode(0);
+   
+   TH1D *hacc_Q2_copy__5 = new TH1D("hacc_Q2_copy", "", 50, 0, 10);
+   hacc_Q2_copy__5->SetBinContent(5,18.28452830188679);
+   hacc_Q2_copy__5->SetBinContent(6,0.4368375073672621);
+   hacc_Q2_copy__5->SetBinContent(7,0.5300444894970997);
+   hacc_Q2_copy__5->SetBinContent(8,0.534281274709917);
+   hacc_Q2_copy__5->SetBinContent(9,0.5273937042299705);
+   hacc_Q2_copy__5->SetBinContent(10,0.5223150483900362);
+   hacc_Q2_copy__5->SetBinContent(11,0.5189540639667598);
+   hacc_Q2_copy__5->SetBinContent(12,0.4975880767823281);
+   hacc_Q2_copy__5->SetBinContent(13,0.4837552025821796);
+   hacc_Q2_copy__5->SetBinContent(14,0.494711233340385);
+   hacc_Q2_copy__5->SetBinContent(15,0.5006008639449154);
+   hacc_Q2_copy__5->SetBinContent(16,0.5245550492658799);
+   hacc_Q2_copy__5->SetBinContent(17,0.5163972286374134);
+   hacc_Q2_copy__5->SetBinContent(18,0.5230150535296995);
+   hacc_Q2_copy__5->SetBinContent(19,0.5222095671981777);
+   hacc_Q2_copy__5->SetBinContent(20,0.5254934210526315);
+   hacc_Q2_copy__5->SetBinContent(21,0.5227963525835866);
+   hacc_Q2_copy__5->SetBinContent(22,0.5233940556088207);
+   hacc_Q2_copy__5->SetBinContent(23,0.5318332089154314);
+   hacc_Q2_copy__5->SetBinContent(24,0.531891495601173);
+   hacc_Q2_copy__5->SetBinContent(25,0.5249100470523111);
+   hacc_Q2_copy__5->SetBinContent(26,0.5290262172284644);
+   hacc_Q2_copy__5->SetBinContent(27,0.515818431911967);
+   hacc_Q2_copy__5->SetBinContent(28,0.5221785513756316);
+   hacc_Q2_copy__5->SetBinContent(29,0.4895133374058236);
+   hacc_Q2_copy__5->SetBinContent(30,0.5193707443061751);
+   hacc_Q2_copy__5->SetBinContent(31,0.484546118276953);
+   hacc_Q2_copy__5->SetBinContent(32,0.5013092813500145);
+   hacc_Q2_copy__5->SetBinContent(33,0.5040768782760628);
+   hacc_Q2_copy__5->SetBinContent(34,0.499672131147541);
+   hacc_Q2_copy__5->SetBinContent(35,0.4935197817189632);
+   hacc_Q2_copy__5->SetBinContent(36,0.490063742032246);
+   hacc_Q2_copy__5->SetBinContent(37,0.4889178617992178);
+   hacc_Q2_copy__5->SetBinContent(38,0.5099425541316837);
+   hacc_Q2_copy__5->SetBinContent(39,0.4454746136865342);
+   hacc_Q2_copy__5->SetBinContent(40,0.5212393803098451);
+   hacc_Q2_copy__5->SetBinContent(41,0.5401252134319864);
+   hacc_Q2_copy__5->SetBinContent(42,0.5142219743446738);
+   hacc_Q2_copy__5->SetBinContent(43,0.4884615384615384);
+   hacc_Q2_copy__5->SetBinContent(44,0.517948717948718);
+   hacc_Q2_copy__5->SetBinContent(45,0.5120910384068279);
+   hacc_Q2_copy__5->SetBinContent(46,0.5090225563909775);
+   hacc_Q2_copy__5->SetBinContent(47,0.5551053484602917);
+   hacc_Q2_copy__5->SetBinContent(48,0.4976599063962558);
+   hacc_Q2_copy__5->SetBinContent(49,0.4884135472370766);
+   hacc_Q2_copy__5->SetBinContent(50,0.530982905982906);
+   hacc_Q2_copy__5->SetBinContent(51,0.4846017970969971);
+   hacc_Q2_copy__5->SetMinimum(0);
+   hacc_Q2_copy__5->SetMaximum(1);
+   hacc_Q2_copy__5->SetEntries(41.24620761816116);
+   hacc_Q2_copy__5->SetDirectory(nullptr);
+   hacc_Q2_copy__5->SetStats(0);
+   hacc_Q2_copy__5->SetFillColor(TColor::GetColor("#7a21ddcc"));
+   hacc_Q2_copy__5->SetFillStyle(3004);
+   hacc_Q2_copy__5->SetLineWidth(2);
+   hacc_Q2_copy__5->SetMarkerStyle(0);
+   hacc_Q2_copy__5->SetMarkerSize(1.200000047683716);
+   hacc_Q2_copy__5->GetXaxis()->SetTitle("Q^{2} [GeV^{2}]");
+   hacc_Q2_copy__5->GetXaxis()->SetLabelFont(42);
+   hacc_Q2_copy__5->GetXaxis()->SetLabelSize(0.04199999943375587);
+   hacc_Q2_copy__5->GetXaxis()->SetTitleSize(0.04500000178813934);
+   hacc_Q2_copy__5->GetXaxis()->SetTitleOffset(1.100000023841858);
+   hacc_Q2_copy__5->GetXaxis()->SetTitleFont(42);
+   hacc_Q2_copy__5->GetYaxis()->SetTitle("Acceptance");
+   hacc_Q2_copy__5->GetYaxis()->SetLabelFont(42);
+   hacc_Q2_copy__5->GetYaxis()->SetLabelSize(0.04199999943375587);
+   hacc_Q2_copy__5->GetYaxis()->SetTitleSize(0.04500000178813934);
+   hacc_Q2_copy__5->GetYaxis()->SetTitleOffset(1.100000023841858);
+   hacc_Q2_copy__5->GetYaxis()->SetTitleFont(42);
+   hacc_Q2_copy__5->GetZaxis()->SetLabelFont(42);
+   hacc_Q2_copy__5->GetZaxis()->SetLabelSize(0.04199999943375587);
+   hacc_Q2_copy__5->GetZaxis()->SetTitleSize(0.04500000178813934);
+   hacc_Q2_copy__5->GetZaxis()->SetTitleOffset(1.100000023841858);
+   hacc_Q2_copy__5->GetZaxis()->SetTitleFont(42);
+   hacc_Q2_copy__5->Draw();
+   hacc_Q2_scatele->Modified();
+   hacc_Q2_scatele->SetSelected(hacc_Q2_scatele);
+}

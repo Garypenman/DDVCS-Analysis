@@ -1,0 +1,7 @@
+{ decls }
+namespace ROOT { namespace VecOps {  } }
+namespace ROOT { namespace VecOps { template <typename T> class RVec; } }
+
+[ libRVecRVecDict.so ]
+# List of selected classes
+class ROOT::VecOps::RVec<ROOT::VecOps::RVec<float> >

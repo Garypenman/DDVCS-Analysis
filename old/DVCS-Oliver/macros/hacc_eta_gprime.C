@@ -1,0 +1,103 @@
+#ifdef __CLING__
+#pragma cling optimize(0)
+#endif
+void hacc_eta_gprime()
+{
+//=========Macro generated from canvas: hacc_eta_gprime/
+//=========  (Fri Feb  6 17:08:48 2026) by ROOT version 6.38.00
+   TCanvas *hacc_eta_gprime = new TCanvas("hacc_eta_gprime", "", 0, 0, 700, 500);
+   gStyle->SetOptFit(0);
+   gStyle->SetOptStat(0);
+   gStyle->SetOptTitle(0);
+   TColor::SetPalette(57, nullptr);
+   hacc_eta_gprime->Range(-13.07692,-0.1445783,12.5641,1.060241);
+   hacc_eta_gprime->SetFillColor(0);
+   hacc_eta_gprime->SetBorderMode(0);
+   hacc_eta_gprime->SetBorderSize(2);
+   hacc_eta_gprime->SetLeftMargin(0.12);
+   hacc_eta_gprime->SetTopMargin(0.05);
+   hacc_eta_gprime->SetBottomMargin(0.12);
+   hacc_eta_gprime->SetFrameBorderMode(0);
+   hacc_eta_gprime->SetFrameBorderMode(0);
+   
+   TH1D *hacc_eta_gprime_copy__17 = new TH1D("hacc_eta_gprime_copy", "", 50, -10, 10);
+   hacc_eta_gprime_copy__17->SetBinContent(15,0.0001218769043266301);
+   hacc_eta_gprime_copy__17->SetBinContent(16,1.198247535596933);
+   hacc_eta_gprime_copy__17->SetBinContent(17,1.097683813627794);
+   hacc_eta_gprime_copy__17->SetBinContent(18,1.044274208100261);
+   hacc_eta_gprime_copy__17->SetBinContent(19,1.035258728573233);
+   hacc_eta_gprime_copy__17->SetBinContent(20,1.003011218788584);
+   hacc_eta_gprime_copy__17->SetBinContent(21,0.917333567205303);
+   hacc_eta_gprime_copy__17->SetBinContent(22,0.9478991811178412);
+   hacc_eta_gprime_copy__17->SetBinContent(23,0.9420357073663322);
+   hacc_eta_gprime_copy__17->SetBinContent(24,0.9379139858149697);
+   hacc_eta_gprime_copy__17->SetBinContent(25,0.9184045342297358);
+   hacc_eta_gprime_copy__17->SetBinContent(26,0.9183419262596941);
+   hacc_eta_gprime_copy__17->SetBinContent(27,0.9353418333579473);
+   hacc_eta_gprime_copy__17->SetBinContent(28,0.9360524917769665);
+   hacc_eta_gprime_copy__17->SetBinContent(29,0.9272627682079178);
+   hacc_eta_gprime_copy__17->SetBinContent(30,1.00453736380192);
+   hacc_eta_gprime_copy__17->SetBinContent(31,1.002846338388973);
+   hacc_eta_gprime_copy__17->SetBinContent(32,1.00049541738915);
+   hacc_eta_gprime_copy__17->SetBinContent(33,1.079178885630498);
+   hacc_eta_gprime_copy__17->SetMinimum(0);
+   hacc_eta_gprime_copy__17->SetMaximum(1);
+   hacc_eta_gprime_copy__17->SetEntries(17.84624138213838);
+   hacc_eta_gprime_copy__17->SetDirectory(nullptr);
+   hacc_eta_gprime_copy__17->SetStats(0);
+   hacc_eta_gprime_copy__17->SetLineWidth(2);
+   hacc_eta_gprime_copy__17->SetMarkerStyle(7);
+   hacc_eta_gprime_copy__17->SetMarkerSize(1.200000047683716);
+   hacc_eta_gprime_copy__17->GetXaxis()->SetTitle("#eta_{#gamma}");
+   hacc_eta_gprime_copy__17->GetXaxis()->SetLabelFont(42);
+   hacc_eta_gprime_copy__17->GetXaxis()->SetLabelSize(0.04199999943375587);
+   hacc_eta_gprime_copy__17->GetXaxis()->SetTitleSize(0.04500000178813934);
+   hacc_eta_gprime_copy__17->GetXaxis()->SetTitleOffset(1.100000023841858);
+   hacc_eta_gprime_copy__17->GetXaxis()->SetTitleFont(42);
+   hacc_eta_gprime_copy__17->GetYaxis()->SetTitle("Acceptance");
+   hacc_eta_gprime_copy__17->GetYaxis()->SetLabelFont(42);
+   hacc_eta_gprime_copy__17->GetYaxis()->SetLabelSize(0.04199999943375587);
+   hacc_eta_gprime_copy__17->GetYaxis()->SetTitleSize(0.04500000178813934);
+   hacc_eta_gprime_copy__17->GetYaxis()->SetTitleOffset(1.100000023841858);
+   hacc_eta_gprime_copy__17->GetYaxis()->SetTitleFont(42);
+   hacc_eta_gprime_copy__17->GetZaxis()->SetLabelFont(42);
+   hacc_eta_gprime_copy__17->GetZaxis()->SetLabelSize(0.04199999943375587);
+   hacc_eta_gprime_copy__17->GetZaxis()->SetTitleSize(0.04500000178813934);
+   hacc_eta_gprime_copy__17->GetZaxis()->SetTitleOffset(1.100000023841858);
+   hacc_eta_gprime_copy__17->GetZaxis()->SetTitleFont(42);
+   hacc_eta_gprime_copy__17->Draw();
+   TLatex *tex = new TLatex(0.15, 0.88, "ePIC Performance");
+   tex->SetLineWidth(2);
+   tex->SetNDC();
+   tex->Draw();
+   tex = new TLatex(0.15, 0.85, "e+p, 10x100 GeV");
+   tex->SetTextAlign(13);
+   tex->SetTextFont(42);
+   tex->SetTextSize(0.04);
+   tex->SetLineWidth(2);
+   tex->SetNDC();
+   tex->Draw();
+   tex = new TLatex(0.65, 0.92, "25.10.3 Campaign");
+   tex->SetTextAlign(13);
+   tex->SetTextFont(42);
+   tex->SetTextSize(0.04);
+   tex->SetLineWidth(2);
+   tex->SetNDC();
+   tex->Draw();
+   tex = new TLatex(0.65, 0.88, "EpIC 1.1.6");
+   tex->SetTextAlign(13);
+   tex->SetTextFont(42);
+   tex->SetTextSize(0.04);
+   tex->SetLineWidth(2);
+   tex->SetNDC();
+   tex->Draw();
+   tex = new TLatex(0.65, 0.84, "EpIC ep #rightarrow e'#gammap");
+   tex->SetTextAlign(13);
+   tex->SetTextFont(42);
+   tex->SetTextSize(0.04);
+   tex->SetLineWidth(2);
+   tex->SetNDC();
+   tex->Draw();
+   hacc_eta_gprime->Modified();
+   hacc_eta_gprime->SetSelected(hacc_eta_gprime);
+}
