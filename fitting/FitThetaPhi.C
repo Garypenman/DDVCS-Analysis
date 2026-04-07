@@ -1,21 +1,23 @@
-//#pragma once
-//#include "Model.C"
+#pragma once
+#include "Model.C"
+#include "ModelV2.C"
 
-//void FitThetaPhi(){
-{
+void FitThetaPhi(TString filebase = "M10_100", Int_t modelID=2){
+
   
   /****************************************/
   /***************Filenames****************/    
   /****************************************/
-  //TString datafile  = "sim_toys2/Toy0.root";
-  //TString datafile  = "toys_test/Toy0.root";
-  //TString datafile  = "/w/work5/home/garyp/rad_trees/HepMC_ddvcs_ee_18x275_mixed.root";
-  TString datafile  = "/w/work5/home/garyp/combirad_trees/HepMC_TCS_18x275_hmixed/TCS_mc_Tree.root";
-  
-  //TString sigfile  = "eepData.root";
-  //TString sigfile = "/w/work5/home/garyp/rad_trees/HepMC_ddvcs_ee_18x275_mixed_flat.root";
-  TString sigfile = "/w/work5/home/garyp/combirad_trees/HepMC_TCS_18x275_Phasespace/TCS_mc_Tree_brufit.root";
+  TString signalfiledir = "HepMC_TCS_18x275_Phasespace";
   TString outdir = "fit_out/";
+
+  if(filebase=="")
+    signalfiledir += "/";
+  else
+    signalfiledir += "_" + filebase + "/";
+      
+  TString datafile  = "/w/work5/home/garyp/combirad_trees/HepMC_TCS_18x275_hmixed/TCS_mc_Tree.root";
+  TString sigfile = "/w/work5/home/garyp/combirad_trees/"+signalfiledir+"TCS_mc_Tree_brufit.root";
   
   /****************************************/
   /************Create FitManager***********/    
@@ -27,7 +29,16 @@
   /****************************************/
   /***********Apply Dilepton model**********/    
   /****************************************/
-  Model(fm); 
+  if(modelID==0){ //simple TCS toy model, ModelV0.C TBD
+    //ModelV0(fm);
+  }else if(modelID==1){ //F1,F1 full BH, need rename
+      Model(fm);
+    }else if(modelID==2){ // alpha mixing BH
+      ModelV2(fm);
+    }else{ //add more as needed
+    std::cout << "No matching fit model ID" << endl;
+    exit(1);
+  }
 
   /**************************************************/  
   /********************Make bins*********************/ 
@@ -42,9 +53,9 @@
 
   fm.LoadData("tree",datafile);
   //fm.LoadData("tree",sigfile);
-   //"Dilepton" is given in Model.C as name of the RooComponentsPDF
-  fm.LoadSimulated("tree",datafile,"Dilepton");
-  //fm.LoadSimulated("tree",sigfile,"Dilepton");
+  //"Dilepton" is given in Model.C as name of the RooComponentsPDF
+  //fm.LoadSimulated("tree",datafile,"Dilepton");
+  fm.LoadSimulated("tree",sigfile,"Dilepton");
 
   /**************************************************/
   /***********Choose minimiser and run***************/ 
@@ -53,6 +64,7 @@
   //fm.SetUp().AddFitOption(RooFit::NumCPU(4)); 
   //std::vector<Int_t> Niters,Int_t Nburn, Float_t norm,float target,float accmin,float accmax
   auto mcmc=new BruMcmcCovariance({5000,20000,10000},100,1,0.23,0.16,0.3);
+  //auto mcmc=new BruMcmcCovariance({100,100,100},100,1,0.23,0.0,1.0);
   fm.SetMinimiser(mcmc);
   Here::Go(&fm);
   //Multi::Go(&fm,10);
