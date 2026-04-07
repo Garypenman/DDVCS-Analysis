@@ -174,3 +174,21 @@ void ProcessMCReconDetector(std::vector<std::string> infiles={"/w/work5/home/gar
   gBenchmark->Print("df");
     
 }
+
+void ProcessMCReconDetector(std::string infile_glob="", 
+			    std::string outfile="/w/work5/home/garyp/rad_trees/test_mcrecondet.root",
+			    const int scat_ele_idx=0, 
+			    const int scat_ion_idx=1, 
+			    const int lep_minus_idx=2, 
+			    const int lep_plus_idx=3,
+			    const int lep_PDG=11)
+{
+  auto infiles = GlobToVector(infile_glob);
+  ProcessMCReconDetector(infiles,
+			 outfile,
+			 scat_ele_idx,
+			 scat_ion_idx,
+			 lep_minus_idx,
+			 lep_plus_idx,
+			 lep_PDG);
+}

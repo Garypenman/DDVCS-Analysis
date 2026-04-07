@@ -29,7 +29,7 @@ void RunCampaignFiles(std::string campaign="25.10.3",
   auto nfiles = -1;
   
   //make local output directory for this campaign, if it doesnt already exist
-  std::string outdir = "/w/work5/home/garyp/rad_trees/Campaign25.10.3/";
+  std::string outdir = "/w/work5/home/garyp/rad_trees/Campaign"+campaign+"/";
   gSystem->Exec(Form("mkdir -p %s",outdir.data()));
   
   // Build the list with derived names
