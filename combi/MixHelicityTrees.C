@@ -1,19 +1,3 @@
-//THIS SCRIPT INTRODUCES QUITE A BIT OF TECH DEBT
-//SHOULD FIND A WAY IN THE FUTURE TO AUTOMATE SOME/MOST
-//OF THE THINGS ITS DOING AT THE RAD LEVEL?
-//FOR NOW GOOD AND FAST WAY TO GET RAD OUTPUTS
-//MIXED AND READY FOR BRUFIT
-
-//#include "HepMCElectro.h"
-//#include "ParticleCreator.h"
-//#include "ParticleGenerator.h"
-//#include "ParticleModifier.h"
-//#include "Indicing.h"
-//#include "Histogrammer.h"
-//#include "BasicKinematicsRDF.h"
-//#include "ReactionKinematicsRDF.h"
-//#include "ElectronScatterKinematicsRDF.h"
-//#include "gammaN_2_Spin0Spin0SpinHalfRDF.h"
 #include <TBenchmark.h>
 #include <TCanvas.h>
 
@@ -169,7 +153,7 @@ void DFMerge(const std::string plus_file, const std::string minus_file, const st
 
 
 //the hard coding here needs fixed eventually!!!!
-void MixHelicityTrees(std::string filebase="/w/work5/home/garyp/eic/Farm/data/EpIC_DDVCS_ee_18x275/rootfiles/18x275_ddvcs_edecay",std::string basename="HepMC_ddvcs_ee_18x275"){
+void MixHelicityTrees(std::string filebase="/w/work5/home/garyp/eic/Farm/data/EpIC_DDVCS_ee_18x275/rootfiles/18x275_ddvcs_edecay",std::string basename="HepMC_TCS_18x275"){
   
   // Enable implicit multi-threading
   ROOT::EnableImplicitMT(8);
@@ -177,11 +161,11 @@ void MixHelicityTrees(std::string filebase="/w/work5/home/garyp/eic/Farm/data/Ep
   gBenchmark->Start("Total");
   
   //later fix this to be filebase->get hplus hminus then
-  std::string plus_file = filebase+"_hplus.root";
-  std::string minus_file = filebase+"_hminus.root";
+  std::string plus_file = filebase+"_hplus.hepmc3.tree.root";
+  std::string minus_file = filebase+"_hminus.hepmc3.tree.root";
   
-  std::string plus_flat_file = filebase+"_hplus_flat.root";
-  std::string minus_flat_file = filebase+"_hminus_flat.root";
+  std::string plus_flat_file = filebase+"_hplus_flat.hepmc3.tree.root";
+  std::string minus_flat_file = filebase+"_hminus_flat.hepmc3.tree.root";
   
   //---NEEDS UPDATED FOR COMBIRAD FRAMEWORK+ANA MACHINERY---
   //this uses DDVCS_GenHeli.C to generate flat phase space files from original files
@@ -191,9 +175,9 @@ void MixHelicityTrees(std::string filebase="/w/work5/home/garyp/eic/Farm/data/Ep
   //DDVS_GenHeli(minus_file,minus_flat_file);
 
   std::string outdir = "/w/work5/home/garyp/combirad_trees/";
-  std::string plus_outdir = outdir+"HepMC_TCS_18x275_hplus/";
-  std::string minus_outdir = outdir+"HepMC_TCS_18x275_hminus/";
-  std::string mixed_outdir = outdir+"HepMC_TCS_18x275_hmixed/";
+  std::string plus_outdir = outdir + basename + "_hplus/";
+  std::string minus_outdir = outdir + basename + "_hminus/";
+  std::string mixed_outdir = outdir + basename + "_hmixed/";
   
   std::string plus_outfile = plus_outdir+"TCS_mc_Tree.root";
   std::string minus_outfile = minus_outdir+"TCS_mc_Tree.root";
