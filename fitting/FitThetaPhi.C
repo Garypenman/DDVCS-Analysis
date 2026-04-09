@@ -2,7 +2,7 @@
 #include "Model.C"
 #include "ModelV2.C"
 
-void FitThetaPhi(TString filebase = "M10_100", Int_t modelID=2){
+void FitThetaPhi(TString filebase = "t0.5", Int_t modelID=2){
 
   
   /****************************************/
@@ -16,8 +16,8 @@ void FitThetaPhi(TString filebase = "M10_100", Int_t modelID=2){
   else
     signalfiledir += "_" + filebase + "/";
       
-  TString datafile  = "/w/work5/home/garyp/combirad_trees/HepMC_TCS_18x275_hmixed/TCS_mc_Tree.root";
-  TString sigfile = "/w/work5/home/garyp/combirad_trees/"+signalfiledir+"TCS_mc_Tree_brufit.root";
+  TString datafile  = "/w/work6/home/gp140f/combirad_trees/HepMC_TCS_18x275_hmixed/TCS_mc_Tree.root";
+  TString sigfile = "/w/work6/home/gp140f/combirad_trees/"+signalfiledir+"TCS_mc_Tree.root";
   
   /****************************************/
   /************Create FitManager***********/    

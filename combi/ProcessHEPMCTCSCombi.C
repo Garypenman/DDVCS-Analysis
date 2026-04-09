@@ -8,12 +8,13 @@
 #include <TBenchmark.h>
 
 #include "ePICFileStreamer.h"
+#include "../include/Config.h"
 #include "../include/FileProcessing.h"
 
-#include "TopologyRecipes.h"
-#include "CorrectionRecipes.h"
-#include "HistogramRecipes.h"
-#include "SelectionRecipes.h"
+#include "../include/TopologyRecipes.h"
+#include "../include/CorrectionRecipes.h"
+#include "../include/HistogramRecipes.h"
+#include "../include/SelectionRecipes.h"
 
 const std::string my_out_dir = "/w/work5/home/garyp/combirad_trees/HepMC_TCS_18x275_Phasespace";
 
@@ -118,3 +119,38 @@ void ProcessHEPMCTCSCombi(const std::string& infile_glob,
 		       lep_PDG);
 }
 
+void ProcessElspectro(const std::string& infile_glob,
+		      std::string outdir = my_out_dir,
+		      const int lep_PDG = 11)
+{
+  auto infiles = GlobToVector(infile_glob);
+  
+  ProcessHEPMCTCSCombi(infiles,
+			outdir,
+			elspectro_beam_ele_idx,
+			elspectro_beam_ion_idx,
+			elspectro_scat_ele_idx,
+			elspectro_scat_ion_idx,
+			elspectro_lep_minus_idx,
+			elspectro_lep_plus_idx,
+			lep_PDG);
+
+}
+
+void ProcessEpic(const std::string& infile_glob,
+		      std::string outdir = my_out_dir,
+		      const int lep_PDG = 11)
+{
+  auto infiles = GlobToVector(infile_glob);
+  
+  ProcessHEPMCTCSCombi(infiles,
+			outdir,
+			epic_beam_ele_idx,
+			epic_beam_ion_idx,
+			epic_scat_ele_idx,
+			epic_scat_ion_idx,
+			epic_lep_minus_idx,
+			epic_lep_plus_idx,
+			lep_PDG);
+
+}
