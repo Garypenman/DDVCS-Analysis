@@ -1,6 +1,8 @@
 #include "../include/Config.h"
 
-void SnapshotBrufit(std::string infile = "/w/work5/home/garyp/combirad_trees/HepMC_TCS_18x275_Phasespace/TCS_mc_Tree.root", std::string outfile = "/w/work5/home/garyp/combirad_trees/HepMC_TCS_18x275_Phasespace/TCS_mc_Tree_brufit.root"){
+void SnapshotBrufit(std::string infile = "/w/work6/home/gp140f/combirad_trees/HepMC_TCS_18x275_Phasespace/TCS_mc_Tree.root", std::string outfile = "/w/work6/home/gp140f/combirad_trees/HepMC_TCS_18x275_Phasespace/TCS_mc_Tree_brufit.root"){
+
+  ROOT::EnableImplicitMT(8);
   ROOT::RDataFrame df("tree",infile);
   
   auto df_new0 = df.Define("r2",[](double s, double Qp2){
@@ -121,6 +123,7 @@ void SnapshotBrufit(std::string infile = "/w/work5/home/garyp/combirad_trees/Hep
     
     
   auto df_filt = df_new.Filter("r2>0");
+  df_filt = df_filt.Filter("d4sigma>0");
   
   auto nstart = df.Count();
   auto nsnap = df_filt.Count();

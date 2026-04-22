@@ -1,22 +1,28 @@
 #include "AnalysisManager.h"
 #include "ePICReaction.h"
+#include "ePICAssociationsManager.h" // <-- NEW: Include the manager
 #include "BasicKinematicsRDF.h"
 #include "KinematicsProcElectro.h"
 #include "ElectronScatterKinematics.h"
 #include "gammaN_2_Spin0Spin0SpinHalf.h"
+#include "DefineNames.h"
 #include <TBenchmark.h>
+#include <vector>
+#include <memory>
+#include <string>
 
 #include "ePICFileStreamer.h"
+#include "../include/Config.h"
 #include "../include/FileProcessing.h"
 
-#include "TopologyRecipes.h"
-#include "CorrectionRecipes.h"
-#include "HistogramRecipes.h"
+#include "../include/TopologyRecipes.h"
+#include "../include/CorrectionRecipes.h"
+#include "../include/SelectionRecipes.h"
+#include "../include/HistogramRecipes.h"
 
-const std::string my_out_dir = "/w/work5/home/garyp/combirad_trees/TCS_18x275_hplus_test/";
 
 void ProcessRecTruthTCSCombi(std::vector<std::string> infiles={""}, 
-			     std::string outdir = my_out_dir,
+			     std::string outdir = test_out_dir,
 			     const int BeamEle_idx = 0,
 			     const int BeamIon_idx = 3,
 			     const int Role_ScatEle  = 2,
@@ -47,7 +53,7 @@ void ProcessRecTruthTCSCombi(std::vector<std::string> infiles={""},
   
   mgr.SetOutputDir(outdir);
   auto& df = mgr.Reaction();
-  df.SetBeamsFromMC(0, 3); 
+  df.SetBeamsFromMC(BeamEle_idx, BeamIon_idx); 
   
   // --- Rec Clone ---
   //"pure" rec clone setup before SetupTruth in order to do SetupMatching
@@ -65,29 +71,31 @@ void ProcessRecTruthTCSCombi(std::vector<std::string> infiles={""},
   
   df.MakeCombinations();
   mgr.AddStream(Truth(),"");
-  
-  
+
   rec_all_df.SetupMatching();
   
-  // --- Auxiliary Data Handling ---
-  //collect and associate cluster energies with particles
-  //rec_cal_energy will be synched with momentum ordering
-  rec_all_df.DefineAssociation("clusters", {"EcalBarrelClusters", "EcalEndcapPClusters"}, "energy");
-  rec_all_df.DefineProjection("rec_cal_energy", "rec_clusters_energy", "rad::util::First");
-  
-  rec_all_df.DefineAssociation("tracks",
-   			       {"TaggerTrackerReconstructedParticles"},
-   			       {"PDG"});
-  rec_all_df.DefineProjection("rec_tracks_pid", 
-  			      "rec_tracks_PDG", 
-  			      "rad::util::First");
-  // rec_all_df.SetParticleCandidates(consts::ScatEle(), 
-  // 				   Role_ScatEle, 
-  // 				   rad::index::FilterIndices((double)11), 
-  // 				   {"rec_tracks_pid"});
+  // --- NEW: Auxiliary Data Handling via Fluent Builder ---
+  epic::ePICAssociationManager assoc(rec_all_df);
+
+  // Extract Central Calorimeter Energies
+  assoc.For("Central")
+       .From({"EcalBarrelClusters", "EcalEndcapPClusters"}) // Optionally add "EcalEndcapNClusters" if needed!
+       .Extract("energy")
+       .As("cal_energy"); // Maps to "rec_cal_energy"
+
+  // Extract Tagger Tracker PIDs
+  assoc.For("Central")
+       .Relation("tracks") // Override default "clusters" relation
+       .From({"TaggerTrackerReconstructedParticles"})
+       .Extract("PDG")
+       .As("tracks_pid", "int"); // Maps to "rec_tracks_pid", explicitly set to integer
+
+  // Execute padding and build the unified arrays for the base dataframe
+  assoc.Build();
+  // -------------------------------------------------------
   
   rec_all_df.DefineDetectorFlag("rec_from_tagger","TaggerTrackerReconstructedParticleAssociations");
-  //auto lowQ2_ele = [](){};
+
   
   // --- Any Further Cloned Managers ---
   //clone these after any mgr or df defines
@@ -98,11 +106,11 @@ void ProcessRecTruthTCSCombi(std::vector<std::string> infiles={""},
  
   
   //now do the rec_all_df candidates and combis
-  // rec_all_df.SetParticleCandidates(consts::ScatEle(), Role_ScatEle, 
-  // 				   rad::index::FilterIndicesWithFlag(11), 
-  // 				   {"rec_true_pid", "rec_from_tagger"});
+  rec_all_df.SetParticleCandidates(consts::ScatEle(), Role_ScatEle, 
+				   rad::index::FilterIndicesWithFlag(11), 
+				   {"rec_true_pid", "rec_from_tagger"});
   
-  rec_all_df.SetParticleCandidates(consts::ScatEle(), Role_ScatEle, rad::index::FilterIndices(11), {"rec_true_pid"});
+  //rec_all_df.SetParticleCandidates(consts::ScatEle(), Role_ScatEle, rad::index::FilterIndices(11), {"rec_true_pid"});
   rec_all_df.SetParticleCandidates("ele", Role_DecayEle, rad::index::FilterIndices(11),  {"rec_true_pid"}); 
   rec_all_df.SetParticleCandidates("pos", Role_DecayPos, rad::index::FilterIndices(-11), {"rec_true_pid"}); 
   rec_all_df.SetParticleCandidates("pprime", Role_Recoil, rad::index::FilterIndices(2212), {"rec_true_pid"}); 
@@ -156,6 +164,7 @@ void ProcessRecTruthTCSCombi(std::vector<std::string> infiles={""},
   rec_all_mgr.Reaction().Define("rec_isTruth_match","rec_isTruth");
   rec_charge_mgr.Reaction().Define("rec_isTruth_match","rec_isTruth");
   rec_pid_mgr.Reaction().Define("rec_isTruth_match","rec_isTruth");
+
   
   auto match_recipe = [](PhysicsSelection& s) {
     //this doesnt work as variables not called just isTruth?
@@ -175,24 +184,24 @@ void ProcessRecTruthTCSCombi(std::vector<std::string> infiles={""},
   // Apply Physics Selections (cuts) to cuts Rec stream
   // Apply Histograms to ALL streams
   
-  mgr.ConfigureKinematics(TCS_Exclusive_Topology);
+  mgr.ConfigureKinematics(topology_recipe);
   //mgr.ConfigureKinematics(Rec(), correction_recipe);
   //mgr.ConfigureSelection(Rec(), selection_recipe);
   mgr.ConfigureHistograms(histogram_recipe);
   
-  rec_all_mgr.ConfigureKinematics(TCS_Exclusive_Topology);
+  rec_all_mgr.ConfigureKinematics(topology_recipe);
   rec_all_mgr.ConfigureKinematics(Rec(), correction_recipe);
   rec_all_mgr.ConfigureSelection(Rec()+"match", match_recipe);
   rec_all_mgr.ConfigureSelection(Rec()+"cuts", selection_recipe);
   rec_all_mgr.ConfigureHistograms(histogram_recipe);
   
-  rec_charge_mgr.ConfigureKinematics(TCS_Exclusive_Topology);
+  rec_charge_mgr.ConfigureKinematics(topology_recipe);
   rec_charge_mgr.ConfigureKinematics(Rec(), correction_recipe);
   rec_charge_mgr.ConfigureSelection(Rec()+"match", match_recipe);
   rec_charge_mgr.ConfigureSelection(Rec()+"cuts", selection_recipe);
   rec_charge_mgr.ConfigureHistograms(histogram_recipe);
   
-  rec_pid_mgr.ConfigureKinematics(TCS_Exclusive_Topology);
+  rec_pid_mgr.ConfigureKinematics(topology_recipe);
   rec_pid_mgr.ConfigureKinematics(Rec(), correction_recipe);
   rec_pid_mgr.ConfigureSelection(Rec()+"match", match_recipe);
   rec_pid_mgr.ConfigureSelection(Rec()+"cuts", selection_recipe);
@@ -202,10 +211,12 @@ void ProcessRecTruthTCSCombi(std::vector<std::string> infiles={""},
   // rad::rdf::PrintParticles(rad_df, Rec());
   
   // [D] TREES
+  std::vector<std::string> extra_cols = {"rec_from_tagger"};
+  extra_cols={};
   mgr.Snapshot();
-  rec_all_mgr.Snapshot();
-  rec_charge_mgr.Snapshot();
-  rec_pid_mgr.Snapshot();
+  rec_all_mgr.Snapshot(extra_cols);
+  rec_charge_mgr.Snapshot(extra_cols);
+  rec_pid_mgr.Snapshot(extra_cols);
   
   //Print diagnostics BEFORE running expensive event loop
   //std::cout << "\n=== CHECKING ANALYSIS SETUP ===\n" << std::endl;
@@ -230,7 +241,7 @@ void ProcessRecTruthTCSCombi(std::vector<std::string> infiles={""},
 
 //---Glob Overload---
 void ProcessRecTruthTCSCombi(const std::string& infile_glob,
-                             std::string outdir = my_out_dir,
+                             std::string outdir = test_out_dir,
                              int BeamEle_idx = 0,
                              int BeamIon_idx = 3,
                              int Role_ScatEle = 2,

@@ -70,9 +70,7 @@ const int edm4hep_elspectro_scat_ion_idx=3;
 const int edm4hep_elspectro_lep_minus_idx=4;
 const int edm4hep_elspectro_lep_plus_idx=5;
 
-
-const std::string farm_dir = "/w/work5/home/garyp/eic/Farm/";
-const std::string out_dir = "/w/work5/home/garyp/combirad_trees/";
+const std::string test_out_dir = "/w/work6/home/gp140f/combirad_trees/TCS_18x275_hplus_test/";
 
 //vector<std::string> brufit_cols = {"UID","mc_t_bot","mc_t_top","mc_GammaPolCirc","mc_GammaE","mc_PhiHel","mc_ThetaHel","mc_CosThetaHel","mc_CMPhi","mc_CMTheta","mc_Q2","mc_Qp","mc_Qp2","mc_s_photo","mc_DeltaT"};
 vector<std::string> brufit_cols = {"rdfentry_","mc_t_bot","mc_t_top","mc_GammaPolCirc","mc_GammaE","mc_PhiHel","mc_ThetaHel","mc_CosThetaHel","mc_PhiCM","mc_CosThetaCM","mc_Q2","mc_Qp","mc_Qp2","mc_s_photo","mc_DeltaT"};

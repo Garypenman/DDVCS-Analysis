@@ -59,7 +59,7 @@ DatasetConfig(const std::string& reac,
     }
 
     // XRDFS path construction
-    std::string base = "/volatile/eic/EPIC/RECO/" + campaign +
+    std::string base = "/eic/EPIC/RECO/" + campaign +
       "/epic_craterlake/EXCLUSIVE/";
 
     if (reaction == "ddvcs") {
