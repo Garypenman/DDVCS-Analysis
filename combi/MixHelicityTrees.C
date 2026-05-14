@@ -153,7 +153,7 @@ void DFMerge(const std::string plus_file, const std::string minus_file, const st
 
 
 //the hard coding here needs fixed eventually!!!!
-void MixHelicityTrees(std::string filebase="/w/work5/home/garyp/eic/Farm/data/EpIC_DDVCS_ee_18x275/rootfiles/18x275_ddvcs_edecay",std::string basename="HepMC_TCS_18x275"){
+void MixHelicityTrees(std::string filebase="/w/work6/home/gp140f/epic_generator_output/rootfiles/18x275_ddvcs_ee", std::string outdirbase="HepMC_TCS_18x275"){
   
   // Enable implicit multi-threading
   ROOT::EnableImplicitMT(8);
@@ -167,17 +167,10 @@ void MixHelicityTrees(std::string filebase="/w/work5/home/garyp/eic/Farm/data/Ep
   std::string plus_flat_file = filebase+"_hplus_flat.hepmc3.tree.root";
   std::string minus_flat_file = filebase+"_hminus_flat.hepmc3.tree.root";
   
-  //---NEEDS UPDATED FOR COMBIRAD FRAMEWORK+ANA MACHINERY---
-  //this uses DDVCS_GenHeli.C to generate flat phase space files from original files
-  //commented because i dont want to redo this every time right now
-  //because i have generated the flat phase space then simulated those events 
-  //DDVCS_GenHeli(plus_file,plus_flat_file);
-  //DDVS_GenHeli(minus_file,minus_flat_file);
-
-  std::string outdir = "/w/work5/home/garyp/combirad_trees/";
-  std::string plus_outdir = outdir + basename + "_hplus/";
-  std::string minus_outdir = outdir + basename + "_hminus/";
-  std::string mixed_outdir = outdir + basename + "_hmixed/";
+  std::string outdir = "/w/work6/home/gp140f/combirad_trees/";
+  std::string plus_outdir = outdirbase + "_hplus/";
+  std::string minus_outdir = outdirbase + "_hminus/";
+  std::string mixed_outdir = outdirbase + "_hmixed/";
   
   std::string plus_outfile = plus_outdir+"TCS_mc_Tree.root";
   std::string minus_outfile = minus_outdir+"TCS_mc_Tree.root";
@@ -207,47 +200,16 @@ void MixHelicityTrees(std::string filebase="/w/work5/home/garyp/eic/Farm/data/Ep
 			 epic_lep_plus_idx,
 			 11);
 
-  // std::string plus_flat_outfile = outdir+basename+"_plus_flat.root";
-  // std::string minus_flat_outfile = outdir+basename+"_minus_flat.root";
-
-  // if(!checkFileExists(plus_flat_outfile))
-  //   ProcessHEPMCTCSCombi(plus_flat_file, plus_flat_outfile);
-  
-  // if(!checkFileExists(minus_flat_outfile))
-  //   ProcessHEPMCTCSCombi(minus_flat_file, minus_flat_outfile);
-  
-  // std::string ab_plusfile = "/w/work5/home/garyp/eic/Farm/data/EpIC_DDVCS_ee_18x275/afterburned/ab_18x275_ddvcs_edecay_hplus.root"; 
-  // std::string ab_minusfile = "/w/work5/home/garyp/eic/Farm/data/EpIC_DDVCS_ee_18x275/afterburned/ab_18x275_ddvcs_edecay_hplus.root"; 
-  // std::string ab_plusoutfile = "/w/work5/home/garyp/rad_trees/AB_"+basename+"_plus.root"; 
-  // std::string ab_minusoutfile = "/w/work5/home/garyp/rad_trees/AB_"+basename+"_minus.root";; 
-  
-  // if(!checkFileExists(ab_plusoutfile))
-  //   ProcessHepMC(ab_plusfile, ab_plusoutfile);
-  // if(!checkFileExists(ab_minusoutfile))
-  //   ProcessHepMC(ab_minusfile, ab_minusoutfile);
-  
-  //std::string mixed_outfile = outdir+basename+"_mixed.root";
-  //std::string mixed_flat_outfile = outdir+basename+"_mixed_flat.root";
   
   std::string treename="tree";
   
   double pol=0.8;
   int nev=100000;
-  
-  DFMerge(plus_outfile, minus_outfile, mixed_outfile, treename, pol, nev);
-  //DFMerge(plus_flat_outfile, minus_flat_outfile, mixed_flat_outfile, treename, pol, nev);
 
+  if(!checkFileExists(mixed_outfile))
+    DFMerge(plus_outfile, minus_outfile, mixed_outfile, treename, pol, nev);
+  
   gBenchmark->Stop("Total");
   gBenchmark->Print("Total");
-  
-  
-  //here we now have flat and physics helicity angle files
-  //DONE 1) convert hepmc files to trees adding a helcity and including all kinemtics needed by the brufit code
-  //DONE 2) use brufit toy generator to fold in physics to a subset of these events
-  
-  // 3) Fit the generated toy with the full data-set used as SimulatedDAta in brufit to calculate the normalsiation integral
-  // 4) Now do the same thing starting from the simulated and reconstructed data
-  // 5) Now fit the full EPiC generated hepmc files without generating toys and again using the flat data you created as the SimulatedData in brufit
-  // 6) Finally fir the simulated and reconstructed EPIc Physics events
-  
+    
 } 

@@ -3,7 +3,7 @@
 #include "../include/Config.h"
 #include "../include/ParticleConfig.h"
 #include "../include/FiducialCuts.h"
-
+#include "../include/DerivedObservable.h"
 
 
 void DrawUnityLine(TH1* h)
@@ -24,35 +24,16 @@ std::string FormatValue(double x) {
     : Form("%.*f", int(std::ceil(-std::log10(std::abs(x)))) + 1, x);
 }
 
-double RoundToSigFig(double x, int sigfig = 1)
-{
-  if (x == 0.0) return 0.0;
-
-  double scale = std::pow(10.0,
-      std::floor(std::log10(std::abs(x))) - sigfig + 1);
-
-  return std::round(x / scale) * scale;
-}
-
-TString FormatSigma(double sigma, const char* name, const char* unit)
-{
-  if (sigma >= 0.1)
-    return Form("#sigma_{#Delta%s} = %.2f %s", name, sigma, unit);
-  else if (sigma >= 0.01)
-    return Form("#sigma_{#Delta%s} = %.3f %s", name, sigma, unit);
-  else
-    return Form("#sigma_{#Delta%s} = %.2e %s", name, sigma, unit);
-}
-
 void MakeParticlePlots(const ParticleConfig& pc,
-			 const std::string& tru_file,
-			 const std::string& rec_file,
-			 TFile& outfile)
+		       const std::string& tru_file,
+		       const std::string& rec_file,
+		       TFile& outfile)
 {
 
   // -- DataFrames --
   ROOT::RDataFrame df_tru("tree", tru_file);
-  //auto df_tru_fidu = df_tru.Filter(
+  //auto df_tru_fidu = df_tru.Filter(pc.TruthFiducialCut());
+
   ROOT::RDataFrame df_rec_base("tree", rec_file);
   auto df_rec_filt = df_rec_base.Filter("isTruth==1");
   
@@ -68,8 +49,12 @@ void MakeParticlePlots(const ParticleConfig& pc,
     },{pc.tru_phi, pc.rec_phi})
     .Define("res_"+pc.name+"_eta",[](double tru, double rec){
       return tru - rec;
-    },{pc.tru_eta, pc.rec_eta});
-
+    },{pc.tru_eta, pc.rec_eta})
+    .Define("tru_"+pc.name+"_theta_mrad",[](double theta){
+      return 1000*theta;
+    },{pc.tru_theta});
+  
+  //auto df_fidu = df_rec.Filter(
 
   //y-axis per bin units
   std::string pbin_acc = FormatValue((pc.p_max - pc.p_min) / pc.nbins_acc);
@@ -219,6 +204,18 @@ void DrawParticlePlots(const std::string& infile,
     return;
   }
 
+  // Truth histograms
+  TH1D* htru_p     = (TH1D*)f->Get(("h_tru_p_"     + particle).c_str());
+  TH1D* htru_theta = (TH1D*)f->Get(("h_tru_theta_" + particle).c_str());
+  TH1D* htru_eta   = (TH1D*)f->Get(("h_tru_eta_"   + particle).c_str());
+  TH1D* htru_phi   = (TH1D*)f->Get(("h_tru_phi_"   + particle).c_str());
+
+  // Reco histograms
+  TH1D* hrec_p     = (TH1D*)f->Get(("h_rec_p_"     + particle).c_str());
+  TH1D* hrec_theta = (TH1D*)f->Get(("h_rec_theta_" + particle).c_str());
+  TH1D* hrec_eta   = (TH1D*)f->Get(("h_rec_eta_"   + particle).c_str());
+  TH1D* hrec_phi   = (TH1D*)f->Get(("h_rec_phi_"   + particle).c_str());
+
   // Acceptance histograms
   TH1D* h_p     = (TH1D*)f->Get(("h_acc_p_"     + particle).c_str());
   TH1D* h_theta = (TH1D*)f->Get(("h_acc_theta_" + particle).c_str());
@@ -251,6 +248,19 @@ void DrawParticlePlots(const std::string& infile,
     h->SetMarkerStyle(20);
     h->SetStats(0);
   }
+  // -- truth plots --
+  for (auto h: {htru_p, htru_theta, htru_eta, htru_phi}){
+    h->SetLineColor(kBlack);
+  }
+  // -- reco plots --
+  for (auto h: {hrec_p, hrec_theta, hrec_eta, hrec_phi}){
+    h->SetLineColor(kMagenta);
+  }
+  
+  // -- phi plots --
+  for (auto h : {htru_phi, hrec_phi}){
+    h->SetMinimum(0.0);
+  }
   // -- acceptance specific style --
   for (auto h : {h_p, h_theta, h_eta, h_phi}) {
     double acc_max = 1.05;
@@ -274,43 +284,76 @@ void DrawParticlePlots(const std::string& infile,
   tex.SetTextAlign(13);
   tex.SetNDC();
   TGaxis::SetMaxDigits(3);
+
+
+  // -- Draw Tru/Rec --
+  TCanvas* c0 = new TCanvas(("c_rectru_" + particle).c_str(),
+			    (pc.title + " Reco vs Truth").c_str(),
+			    1400,1000);
+  c0->Divide(2,2);
+  c0->cd(1)->SetLogy();
+  htru_p->SetMinimum(0.1);
+  htru_p->Draw("hist");
+  hrec_p->Draw("hist same");
+  gPad->Print((pc.name+"_pmag.png").c_str());
+
+  c0->cd(2);
+  htru_theta->Draw("hist");
+  hrec_theta->Draw("hist same");
+  gPad->Print((pc.name+"_theta.png").c_str());
+
+  c0->cd(3);
+  htru_eta->Draw("hist");
+  hrec_eta->Draw("hist same");
+  gPad->Print((pc.name+"_eta.png").c_str());
+
+  c0->cd(4);
+  htru_phi->Draw("hist");
+  hrec_phi->Draw("hist same");
+  gPad->Print((pc.name+"_phi.png").c_str());
+
+  //c0->Update();
+  c0->Print((pc.name+"_trurec.png").c_str());
+  c0->Print((pc.name+"_trurec.pdf").c_str());
   
+  //c0->Close();
+
   // -- Draw Acceptances --
-  TCanvas* c = new TCanvas(("c_acc_" + particle).c_str(),
+  TCanvas* c1 = new TCanvas(("c_acc_" + particle).c_str(),
 			   (pc.title + " Acceptances").c_str(),
 			   1400,1000);
-  c->Divide(2,2);
-  c->cd(1);
+  c1->Divide(2,2);
+  c1->cd(1);
   h_p->Draw("hist");
   DrawUnityLine(h_p);
   gPad->Print((pc.name+"_pmag_acc.png").c_str());
 
-  c->cd(2);
+  c1->cd(2);
   h_theta->Draw("hist");
   DrawUnityLine(h_theta);
   gPad->Print((pc.name+"_theta_acc.png").c_str());
 
-  c->cd(3);
+  c1->cd(3);
   h_eta->Draw("hist");
   DrawUnityLine(h_eta);
   gPad->Print((pc.name+"_phi_acc.png").c_str());
 
-  c->cd(4);
+  c1->cd(4);
   h_phi->Draw("hist");
   DrawUnityLine(h_phi);
   gPad->Print((pc.name+"_eta_acc.png").c_str());
 
-  //c->Update();
-  c->Print((pc.name+"_acceptances.png").c_str());
-  c->Print((pc.name+"_acceptances.pdf").c_str());
+  //c1->Update();
+  c1->Print((pc.name+"_acceptances.png").c_str());
+  c1->Print((pc.name+"_acceptances.pdf").c_str());
   
-  c->Close();
+  //c1->Close();
 
   // -- Draw Resolutions --
-  TCanvas* c1 = new TCanvas(("c_res_" + particle).c_str(),
+  TCanvas* c2 = new TCanvas(("c_res_" + particle).c_str(),
                             (pc.title + " Resolutions").c_str(),
 			    1400,1000);
-  c1->cd();
+  c2->cd();
   
   TF1 *fp = new TF1("fp","gaus");
   h_p_res->Fit(fp,"Q","");
@@ -321,38 +364,38 @@ void DrawParticlePlots(const std::string& infile,
   TF1 *fphi = new TF1("fphi","gaus");
   h_phi_res->Fit(fphi,"Q","");
 
-  c1->Clear();
-  c1->Divide(2,2);
+  c2->Clear();
+  c2->Divide(2,2);
 
-  c1->cd(1);
+  c2->cd(1);
   h_p_res->Draw("hist");
   auto p_sig = fp->GetParameter(2);
   tex.DrawLatex(.2,.8,Form("#sigma_{#Deltap/p} = %s %%", FormatValue(100*p_sig).c_str()));
   gPad->Print((pc.name+"_pmag_res.png").c_str());
 
 		
-  c1->cd(2);
+  c2->cd(2);
   h_theta_res->Draw("hist");
   auto th_sig = fth->GetParameter(2);
   tex.DrawLatex(.2,.8,Form("#sigma_{#Delta#theta} = %s mrad", FormatValue(th_sig).c_str()));
   gPad->Print((pc.name+"_theta_res.png").c_str());
   
-  c1->cd(3);
+  c2->cd(3);
   h_eta_res->Draw("hist");
   auto eta_sig = feta->GetParameter(2);
   tex.DrawLatex(.2,.8,Form("#sigma_{#Delta#eta} = %s", FormatValue(eta_sig).c_str()));
   gPad->Print((pc.name+"_eta_res.png").c_str());
   
-  c1->cd(4);
+  c2->cd(4);
   h_phi_res->Draw("hist");
   auto phi_sig = fphi->GetParameter(2);
   tex.DrawLatex(.2,.8,Form("#sigma_{#Delta#phi} = %s rad", FormatValue(phi_sig).c_str()));
   gPad->Print((pc.name+"_phi_res.png").c_str());
 
-  //c1->Update();
-  c1->Print((pc.name+"_resolutions.png").c_str());
-  c1->Print((pc.name+"_resolutions.pdf").c_str());
-  c1->Close();
+  //c2->Update();
+  c2->Print((pc.name+"_resolutions.png").c_str());
+  c2->Print((pc.name+"_resolutions.pdf").c_str());
+  c2->Close();
 
 }
 
@@ -370,6 +413,9 @@ void SingleParticleAnalysis(std::string infiledir = test_out_dir, std::string be
   std::string rec_filename = infiledir + "TCS_all_rec_Tree.root";
 
   std::vector<ParticleConfig> particles;
+
+  //these should go in something like
+  //SetupTCSParticles.h or .C
   //scattered electron
   ParticleConfig scat_ele{
       "scat_ele", "Scattered Electron", "e'",
@@ -379,6 +425,18 @@ void SingleParticleAnalysis(std::string infiledir = test_out_dir, std::string be
       3.12, 3.14, -6, 6,//theta
       -3.14, 3.14, -3.14, 3.14,//phi
       -12.0, -6.0, -1, 1//eta
+  };
+  
+  FiducialCuts scatele_cuts;
+  scatele_cuts.use_p = true;
+  scatele_cuts.p_min = 6.0;
+  scatele_cuts.p_max = 12.0;
+  scat_ele.fid = scatele_cuts;
+  
+  DerivedObservable Q2_obs{
+    "Q2", "Q2", "Q^{2} [GeV^{2}]",
+    0, 10,
+    -0.001, 0.001
   };
   
   //decay electron
@@ -413,7 +471,7 @@ void SingleParticleAnalysis(std::string infiledir = test_out_dir, std::string be
   particles.push_back(ele);
   particles.push_back(pos);
   particles.push_back(pprime);
-  
+
   for (const auto& pc : particles) {
     MakeParticlePlots(pc, tru_filename, infiledir+pc.rec_filename, fout);
   }

@@ -75,14 +75,12 @@ void ProcessHEPMCTCSCombi(std::vector<std::string> infiles={"/w/work5/home/garyp
   //mgr.ConfigureSelection(selection_recipe);
   mgr.ConfigureHistograms(histogram_recipe);
   
-  //rad::rdf::PrintParticles(rad_df, MC());
-  //rad::PrintDefinedColumnNames(mgr.Reaction().CurrFrame());
   mgr.Snapshot();
 
   //Diagnostics helpers
-  // rad::rdf::PrintParticles(rad_df, MC());
-  rad::PrintDefinedColumnNames(mgr.Reaction().CurrFrame());
-  mgr.PrintDiagnostics();
+  //rad::rdf::PrintParticles(rad_df, MC());
+  //rad::PrintDefinedColumnNames(mgr.Reaction().CurrFrame());
+  //mgr.PrintDiagnostics();
   //PrintDefinedColumnNames will give a list of all columns we can print at this point
   //optional 3rd argument = number of events to print for
   
