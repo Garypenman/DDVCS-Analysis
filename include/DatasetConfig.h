@@ -1,5 +1,4 @@
-#ifndef DATASETCONFIG_H
-#define DATASETCONFIG_H
+#pragma once
 
 #include <string>
 #include <stdexcept>
@@ -75,5 +74,3 @@ DatasetConfig(const std::string& reac,
     }
   }
 };
-
-#endif // DATASETCONFIG_H

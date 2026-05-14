@@ -1,5 +1,4 @@
-#ifndef CONFIG_H
-#define CONFIG_H
+#pragma once
 
 ///////////////////////////////////////
 // HEPMC
@@ -75,4 +74,3 @@ const std::string test_out_dir = "/w/work6/home/gp140f/combirad_trees/TCS_18x275
 //vector<std::string> brufit_cols = {"UID","mc_t_bot","mc_t_top","mc_GammaPolCirc","mc_GammaE","mc_PhiHel","mc_ThetaHel","mc_CosThetaHel","mc_CMPhi","mc_CMTheta","mc_Q2","mc_Qp","mc_Qp2","mc_s_photo","mc_DeltaT"};
 vector<std::string> brufit_cols = {"rdfentry_","mc_t_bot","mc_t_top","mc_GammaPolCirc","mc_GammaE","mc_PhiHel","mc_ThetaHel","mc_CosThetaHel","mc_PhiCM","mc_CosThetaCM","mc_Q2","mc_Qp","mc_Qp2","mc_s_photo","mc_DeltaT"};
   
-#endif
