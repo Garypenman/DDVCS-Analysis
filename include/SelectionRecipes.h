@@ -1,3 +1,5 @@
+#pragma once
+
 auto TCS_Selection_Recipe = [](rad::PhysicsSelection& s) {
     
     // At least reconstruct each particle

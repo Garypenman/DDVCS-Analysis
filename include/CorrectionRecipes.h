@@ -1,3 +1,5 @@
+#pragma once
+
 #include "AnalysisManager.h"
 #include "HepMCElectro.h"
 #include "BasicKinematicsRDF.h"

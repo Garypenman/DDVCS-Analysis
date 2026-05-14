@@ -5,8 +5,6 @@
 #include <cmath>
 #include <TString.h>
 
-// Forward declaration (avoids circular include)
-struct ParticleConfig;
 
 // --------------------------------------------------
 // Helper: join cut strings with AND
@@ -39,69 +37,39 @@ struct FiducialCuts {
   double phi_min = 0.0,   phi_max = 0.0;
 
   // ------------------------------------------------
-  // Truth-level cut string
+  // Make Cut String
   // ------------------------------------------------
-  std::string TruthCut(const ParticleConfig& pc) const
+  
+  std::string MakeCut(const std::string& p_branch,
+                      const std::string& eta_branch,
+                      const std::string& theta_branch,
+                      const std::string& phi_branch)const
   {
     std::vector<std::string> cuts;
-
+    
     if (use_p)
       cuts.emplace_back(
         Form("(%s > %g && %s < %g)",
-             pc.tru_p.c_str(), p_min,
-             pc.tru_p.c_str(), p_max));
+             p_branch.c_str(), p_min,
+             p_branch.c_str(), p_max));
 
     if (use_eta)
       cuts.emplace_back(
         Form("abs(%s) > %g && abs(%s) < %g",
-             pc.tru_eta.c_str(), eta_min,
-             pc.tru_eta.c_str(), eta_max));
+             eta_branch.c_str(), eta_min,
+             eta_branch.c_str(), eta_max));
 
     if (use_theta)
       cuts.emplace_back(
         Form("(%s > %g && %s < %g)",
-             pc.tru_theta.c_str(), theta_min,
-             pc.tru_theta.c_str(), theta_max));
+             theta_branch.c_str(), theta_min,
+             theta_branch.c_str(), theta_max));
 
     if (use_phi)
       cuts.emplace_back(
         Form("(%s > %g && %s < %g)",
-             pc.tru_phi.c_str(), phi_min,
-             pc.tru_phi.c_str(), phi_max));
-
-    return JoinCuts(cuts);
-  }
-
-  // ------------------------------------------------
-  // Reco-level cut string
-  // ------------------------------------------------
-  std::string RecoCut(const ParticleConfig& pc) const
-  {
-    std::vector<std::string> cuts;
-
-    if (use_p)
-      cuts.emplace_back(
-        Form("(%s > %g && %s < %g)",
-             pc.rec_p.c_str(), p_min,
-             pc.rec_p.c_str(), p_max));
-
-    if (use_eta)
-      cuts.emplace_back(
-        Form("abs(%s) > %g && abs(%s) < %g",
-             pc.rec_eta.c_str(), eta_min,
-             pc.rec_eta.c_str(), eta_max));
-
-    if (use_theta)
-      cuts.emplace_back(
-        Form("(%s > %g && %s < %g)",
-             pc.rec_theta.c_str(), theta_min,
-             pc.rec_theta.c_str(), theta_max));
-
-    if (use_phi)
-      cuts.emplace_back(
-        Form("(%s > %g && %s < %g)",
-             pc.rec_phi.c_str(), phi_min,
-             pc.rec_phi.c_str(), phi_max));
+             phi_branch.c_str(), phi_min,
+             phi_branch.c_str(), phi_max));
 
     return JoinCuts(cuts);
   }
