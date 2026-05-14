@@ -152,22 +152,16 @@ void DFMerge(const std::string plus_file, const std::string minus_file, const st
 }
 
 
-//the hard coding here needs fixed eventually!!!!
-void MixHelicityTrees(std::string filebase="/w/work6/home/gp140f/epic_generator_output/rootfiles/18x275_ddvcs_ee", std::string outdirbase="HepMC_TCS_18x275"){
+void MixHelicityTrees(std::string filebase="/w/work6/home/gp140f/epic_generator_output/rootfiles/18x275_ddvcs_ee", std::string outdirbase="/w/work6/home/gp140f/combirad_trees/HepMC_TCS_18x275"){
   
   // Enable implicit multi-threading
   ROOT::EnableImplicitMT(8);
   gROOT->SetBatch(kTRUE);
   gBenchmark->Start("Total");
   
-  //later fix this to be filebase->get hplus hminus then
   std::string plus_file = filebase+"_hplus.hepmc3.tree.root";
   std::string minus_file = filebase+"_hminus.hepmc3.tree.root";
-  
-  std::string plus_flat_file = filebase+"_hplus_flat.hepmc3.tree.root";
-  std::string minus_flat_file = filebase+"_hminus_flat.hepmc3.tree.root";
-  
-  std::string outdir = "/w/work6/home/gp140f/combirad_trees/";
+    
   std::string plus_outdir = outdirbase + "_hplus/";
   std::string minus_outdir = outdirbase + "_hminus/";
   std::string mixed_outdir = outdirbase + "_hmixed/";
