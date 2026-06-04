@@ -31,7 +31,7 @@
       -> .hepmc3.tree.root
       -> DDVCS-Analysis processing
       -> combined helicity ROOT trees
-
+      -> edm4hep output analysis
 
     ------------------------------------------------------------
     DATA FLOW
