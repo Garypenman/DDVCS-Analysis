@@ -2,23 +2,28 @@
 #include "Model.C"
 #include "ModelV2.C"
 
-void FitThetaPhi(TString filebase = "t0.5", Int_t modelID=2){
+void FitThetaPhi(TString filebase = "t1", Int_t modelID=2){
 
   
   /****************************************/
   /***************Filenames****************/    
   /****************************************/
-  TString signalfiledir = "HepMC_TCS_18x275_Phasespace";
+  TString signalfiledir = "HepMC_TCS_10x100_Phasespace";
   TString outdir = "fit_out/";
 
   if(filebase=="")
     signalfiledir += "/";
   else
     signalfiledir += "_" + filebase + "/";
-      
-  TString datafile  = "/w/work6/home/gp140f/combirad_trees/HepMC_TCS_18x275_hmixed/TCS_mc_Tree.root";
-  TString sigfile = "/w/work6/home/gp140f/combirad_trees/"+signalfiledir+"TCS_mc_Tree.root";
-  
+
+  //10x100 full epic
+  //TString datafile  = "/w/work6/home/gp140f/combirad_trees/HepMC_TCS_10x100_hplus/TCS_mc_Tree.root";
+  //10x100 BH only
+  TString datafile  = "/w/work6/home/gp140f/combirad_trees/HepMC_TCS_10x100_BHONLY_hplus/TCS_mc_Tree.root";
+
+  //phasespace file
+  TString sigfile = "/w/work6/home/gp140f/combirad_trees/"+signalfiledir+"TCS_mc_Tree_brufit.root";
+  //sigfile = "../hepmc/TCSPhaseSpace.root";
   /****************************************/
   /************Create FitManager***********/    
   /****************************************/

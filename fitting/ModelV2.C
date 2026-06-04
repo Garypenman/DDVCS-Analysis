@@ -5,13 +5,14 @@ void ModelV2(FitManager& fm, Int_t Nevents=10000){
   /*************Load Variables*************/    
   /****************************************/
   //Watch theta limits!!! cannot go to 0 as discontinuity
-  fm.SetUp().LoadVariable(Form("mc_ThetaHel[%lf,%lf]",TMath::Pi()/10,TMath::Pi()*9/10));
+  fm.SetUp().LoadVariable("mc_CosThetaHel[-0.98,0.98]");
+  //fm.SetUp().LoadVariable(Form("mc_ThetaHel[%lf,%lf]",TMath::Pi()/10,TMath::Pi()*9/10));
   fm.SetUp().LoadVariable(Form("mc_PhiHel[-%lf,%lf]",TMath::Pi(),TMath::Pi()));
   //fm.SetUp().LoadVariable(Form("mc_GammaPolCirc[0,-1,1]"));
   
-  fm.SetUp().LoadVariable("mc_Qp2[2,18]");
-  fm.SetUp().LoadVariable("mc_s_photo[6,100]");
-  fm.SetUp().LoadVariable("mc_t_bot[0.001,0.5]");
+  fm.SetUp().LoadVariable("mc_Qp2[2,20]");
+  fm.SetUp().LoadVariable("mc_s_photo[0.0,200]");
+  fm.SetUp().LoadVariable("mc_t_bot[0.6,0.8]");
   //fm.SetUp().LoadVariable("mc_DeltaT[0.001,0.5]");
   
   // fm.SetUp().LoadConstant("mc_Qp[2]");
@@ -29,6 +30,7 @@ void ModelV2(FitManager& fm, Int_t Nevents=10000){
   /*************Load Formula*************/    
   /****************************************/
   //short hand variables
+  fm.SetUp().LoadFormula("mc_ThetaHel=TMath::ACos(@mc_CosThetaHel[])");
   fm.SetUp().LoadFormula("mc_Qp=TMath::Sqrt(@mc_Qp2[])");
   fm.SetUp().LoadFormula("tbot= (-1) * @mc_t_bot[]"); //t comes out of rad positive for q.o.l
   fm.SetUp().LoadFormula("beta=TMath::Sqrt(1 - (4*@me[]*@me[]/@mc_Qp2[]))");
@@ -43,17 +45,18 @@ void ModelV2(FitManager& fm, Int_t Nevents=10000){
   fm.SetUp().LoadFormula("C0=@beta[] * @r[]");
   fm.SetUp().LoadFormula("C1=@beta[] * ( (@mc_Qp2[]*(@mc_s_photo[] - @Mp[]*@Mp[] - @mc_Qp2[])) + (@tbot[]*(@mc_s_photo[] - @Mp[]*@Mp[] + @mc_Qp2[])) ) / @r[]");
   fm.SetUp().LoadFormula("C2=(-2) * @beta[] * (@mc_s_photo[] - @Mp[]*@Mp[]) * @mc_Qp[] * @mc_DeltaT[] / @r[]");
-  //fm.SetUp().LoadFormula("C1=1");
-  //fm.SetUp().LoadFormula("C2=-1");
+  //fm.SetUp().LoadFormula("C1=@mc_Qp2[]");
+  //fm.SetUp().LoadFormula("C2=0");
   
   fm.SetUp().LoadFormula("a=@C0[] * TMath::Cos(@mc_ThetaHel[])");
   fm.SetUp().LoadFormula("b=(@C1[] * TMath::Cos(@mc_ThetaHel[])) + (@C2[] * TMath::Sin(@mc_ThetaHel[]) * TMath::Cos(@mc_PhiHel[]))");
   fm.SetUp().LoadFormula("b2=(@b[] * @b[])");
-  fm.SetUp().LoadFormula("Lraw=((@mc_Qp2[] - @tbot[])*(@mc_Qp2[] - @tbot[]) - @b2[])/4");
-  fm.SetUp().LoadFormula("L=TMath::Max(@Lraw[],1e-6)");
+  fm.SetUp().LoadFormula("L=((@mc_Qp2[] - @tbot[])*(@mc_Qp2[] - @tbot[]) - @b2[])/4");
+  //fm.SetUp().LoadFormula("L=TMath::Max(@Lraw[],1e-10)");
   
   //kinematic prefactor
-  fm.SetUp().LoadFormula("BHprefac=@alpha3[]*@beta[] / (4*@pi[]*(@mc_s_photo[] - @Mp[]*@Mp[])*(@mc_s_photo[] - @Mp[]*@Mp[]) * (-1*@tbot[]*@L[]))");
+  fm.SetUp().LoadFormula("PhaseSpace=@beta[]/(@mc_s_photo[] - @Mp[]*@Mp[])*(@mc_s_photo[] - @Mp[]*@Mp[])");
+  fm.SetUp().LoadFormula("BHprefac=@alpha3[] / (4*@pi[]* (-1*@tbot[]*@L[]))");
   
   //BH A Terms
   fm.SetUp().LoadFormula("A0=(@mc_s_photo[] - @Mp[]*@Mp[])*(@mc_s_photo[] - @Mp[]*@Mp[])*@mc_DeltaT[]*@mc_DeltaT[]");
@@ -151,7 +154,7 @@ void ModelV2(FitManager& fm, Int_t Nevents=10000){
 
 
   // Apply them to the PDF
-  fm.SetUp().FactoryPDF("BruComponentsPDF::Dilepton(0,{mc_PhiHel,mc_ThetaHel,mc_s_photo,mc_Qp2,mc_t_bot},=wF1sq;BHF1A:wF1sq;BHF1B:wF2sq;BHF2A:wF2sq;BHF2B:wF1F2;BHF1F2)");
+  fm.SetUp().FactoryPDF("BruComponentsPDF::Dilepton(0,{mc_PhiHel,mc_CosThetaHel,mc_s_photo,mc_Qp2,mc_t_bot},=wF1sq;BHF1A:wF1sq;BHF1B:wF2sq;BHF2A:wF2sq;BHF2B:wF1F2;BHF1F2)");
   
   fm.SetUp().LoadSpeciesPDF("Dilepton",Nevents);
 }

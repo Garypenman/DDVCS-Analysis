@@ -3,7 +3,7 @@ void MakeFitResultPDF(){
   std::string filename = "fit_out/ResultsBruMcmcCovariance.root";
   TFile *f = new TFile(filename.c_str(),"OPEN");
   
-  TCanvas *pad_theta = (TCanvas*) f->Get("_mc_ThetaHel");
+  TCanvas *pad_theta = (TCanvas*) f->Get("_mc_CosThetaHel");
   TCanvas *pad_phi = (TCanvas*) f->Get("_mc_PhiHel");
   //TCanvas *pad_pol = (TCanvas*) f->Get("_mc_GammaPolCirc");
   TCanvas *pad_qp2 = (TCanvas*) f->Get("_mc_Qp2");
