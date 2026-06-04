@@ -11,14 +11,21 @@
 
 using namespace rad::consts;
 
-auto TCS_Mass_Corrections = [](rad::KinematicsProcessor& p) {
-  p.PreModifier().FixMass(ScatEle(), M_ele());
-  p.PreModifier().FixMass("ele", M_ele());
-  p.PreModifier().FixMass("pos", M_ele());
-  p.PreModifier().FixMass("pprime", M_pro());
+auto TCS_MassP_Corrections = [](rad::KinematicsProcessor& p) {
+  p.PreModifier().FixMassWithP(ScatEle(), M_ele());
+  p.PreModifier().FixMassWithP("ele", M_ele());
+  p.PreModifier().FixMassWithP("pos", M_ele());
+  p.PreModifier().FixMassWithP("pprime", M_pro());
 };
-  
+
+auto TCS_MassE_Corrections = [](rad::KinematicsProcessor& p) {
+  p.PreModifier().FixMassWithE(ScatEle(), M_ele());
+  p.PreModifier().FixMassWithE("ele", M_ele());
+  p.PreModifier().FixMassWithE("pos", M_ele());
+  p.PreModifier().FixMassWithE("pprime", M_pro());
+};
+   
 auto JPsi_Mass_Corrections = [](rad::KinematicsProcessor& p) {
   //Fix reconstructed Jpsi mass after it is calculted
-  p.PostModifier().FixMass("Jpsi", M_Jpsi());
+  p.PostModifier().FixMassWithP("Jpsi", M_Jpsi());
 };  

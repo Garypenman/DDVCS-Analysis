@@ -43,7 +43,7 @@ void ProcessRecTruthTCSCombi(std::vector<std::string> infiles={""},
   // =================================================================================
   if(infiles[0] == ""){
     std::cout << "Infiles empty, grabbing test xrootd file!" << std::endl;
-    infiles = rad::files::GetXRootDFiles("dtn-eic.jlab.org/","/volatile/eic/EPIC/RECO/26.02.0/epic_craterlake/EXCLUSIVE/DDVCS_ABCONV/EpIC1.1.6-1.0/18x275/q2_0_10/edecay/hplus/","edm4eic.root",1);
+    infiles = rad::files::GetXRootDFiles("dtn-eic.jlab.org/","/volatile/eic/EPIC/RECO/26.02.0/epic_craterlake/EXCLUSIVE/DDVCS_ABCONV/EpIC1.1.6-1.0/18x275/q2_0_10/edecay/hplus/","edm4eic.root",10);
   }
   
   AnalysisManager<Reaction,Processor>  mgr{
@@ -155,7 +155,7 @@ void ProcessRecTruthTCSCombi(std::vector<std::string> infiles={""},
   
   
   // [B] REC-SPECIFIC CORRECTIONS
-  auto correction_recipe = TCS_Mass_Corrections;
+  auto correction_recipe = TCS_MassP_Corrections;
   
   
   // [C] SELECTION CUTS

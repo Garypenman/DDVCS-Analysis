@@ -1,5 +1,6 @@
 //hepmc includes
 #include "MixHelicityTrees.C"
+#include "SnapshotBrufit.C"
 
 //epic sim includes
 #include "RunCampaignFilesCombi.C"
@@ -49,30 +50,95 @@ void RunHepMC(){
 	}
 
 	std::cout << "Mixing filebase: " + filebase + " into outdirbase " << outdirbase << std::endl;
-	//MixHelicityTrees(filebase,outdirbase);
+	MixHelicityTrees(filebase,outdirbase);
 
       }
     }
   }
 
 }
-  
 
-void RunCampaigns(){
-  std::vector<string> campaigns;
-  campaigns.push_back("26.02.0");
-  campaigns.push_back("26.03.1");
-  campaigns.push_back("26.04.1");
 
-  for (auto& campaign : campaigns){
-    ;
-    //RunCampaignFilesCombi(campaign);
+void RunPhasespace(){
+
+  std::string basedir = "/w/work6/home/gp140f/phasespace/";
+  std::string filedir = basedir + "rootfiles/";
+  std::string outbase = basedir + "trees/";
+
+  std::vector<std::pair<std::string,std::string>> files = {
+    {"0", "dilep_phsp_18_275"},
+    {"1", "dilep_phsp_18_275_v2"},
+    {"2", "dilep_phsp_18_275_M1.5GeV"},
+    {"3", "dilep_phsp_10_100"},
+    {"4", "dilep_phsp_10_100_t1"},
+    {"5", "dilep_phsp_10_100_b5_10M"}
+  };
+
+  for(const auto& [tag, file] : files){
+    auto inputfile = filedir + file + ".root";
+    auto outdir = outbase + file + "/";
+    auto outputfile = outdir + "TCS_mc_Tree.root";
+    auto brufitfile = outdir + "TCS_mc_Tree_brufit.root";
+    
+    if( checkFileExists(inputfile) && !checkFileExists(outputfile)){
+      cout << "Processing " + tag + ": " + inputfile << endl;
+      cout << "Output: " + outdir << endl;
+      ProcessElspectro(inputfile, outdir);
+    }
+
+    if( !(checkFileExists(brufitfile)) ){
+      cout << "Processing: " + outputfile << endl;
+      cout << "Output: " + brufitfile << endl;
+      SnapshotBrufit(outputfile, brufitfile);
+    }
   }
   
 }
+
+
+void RunCampaigns(bool dry_run=true){
+  auto datasets = GetDatasets();
+  for (const auto& d : datasets){    
+    RunCampaignFilesCombi(d,-1,dry_run);
+  }
+}
+
+void RunCampaignTest(){
+
+  std::string test_out = "/w/work6/home/gp140f/combirad_trees/test_run/";
+
+  //std::vector<DatasetConfig> test_datasets = {
+
+  auto nobg = DatasetConfig("ddvcs","edecay","hplus","18x275","26.02.0",
+			    BkgType::None);
+
+  auto bg = DatasetConfig("ddvcs","edecay","hplus","18x275","26.02.0",
+			  BkgType::Exact1S_2us_GoldCt_5um);
+
+  //RunCampaignFilesCombi(nobg, 10, false, test_out);
+  RunCampaignFilesCombi(bg, 1000, false, test_out);
+  
+  //};
+
+  // for(const auto& d : test_datasets){
+
+  //   std::cout << "\n=== TEST RUN ===\n";
+
+    // RunCampaignFilesCombi(
+    //   d,
+    //   10,             // <-- only 10 files
+    //   false,          // dry run OFF (real run)
+    //   test_out        // <-- force test directory
+  //   );
+  // }
+}
+
+
 void RunEverything(){
   
-  RunHepMC();
+  //RunPhasespace();
+  //RunHepMC();
+  RunCampaignTest();
   //RunCampaigns();
   
 }

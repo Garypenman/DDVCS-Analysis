@@ -10,6 +10,8 @@ void SnapshotBrufit(std::string infile = "/w/work6/home/gp140f/combirad_trees/He
       double M2=M*M;
       return (s-Qp2-M2)*(s-Qp2-M2) - 4*Qp2*M2;
     },{"mc_s_photo","mc_Qp2"});
+
+  df_new0 = df_new0.Define("UID","rdfentry_");
   
   auto df_new = df_new0.Filter("r2>0")
     .Define("r", [] (double r2){
@@ -124,6 +126,7 @@ void SnapshotBrufit(std::string infile = "/w/work6/home/gp140f/combirad_trees/He
     
   auto df_filt = df_new.Filter("r2>0");
   df_filt = df_filt.Filter("d4sigma>0");
+  df_filt = df_filt.Filter("1/L < 2000");
   
   auto nstart = df.Count();
   auto nsnap = df_filt.Count();
@@ -132,35 +135,38 @@ void SnapshotBrufit(std::string infile = "/w/work6/home/gp140f/combirad_trees/He
   opts.fLazy = false;
   opts.fOverwriteIfExists = true;
   opts.fMode = "RECREATE";
-  
-  brufit_cols.push_back("r");
-  brufit_cols.push_back("r2");
-  brufit_cols.push_back("beta");
-  brufit_cols.push_back("C0");
-  brufit_cols.push_back("C1");
-  brufit_cols.push_back("C2");
-  brufit_cols.push_back("b");
-  brufit_cols.push_back("a");
-  brufit_cols.push_back("L");
-  brufit_cols.push_back("A0");
-  brufit_cols.push_back("A1");
-  brufit_cols.push_back("A2");
-  brufit_cols.push_back("A3");
-  brufit_cols.push_back("A4");
-  brufit_cols.push_back("A5");
-  brufit_cols.push_back("B0");
-  brufit_cols.push_back("B1");
-  brufit_cols.push_back("B2");
-  brufit_cols.push_back("B3");
-  brufit_cols.push_back("A");
-  brufit_cols.push_back("B");
-  brufit_cols.push_back("F1");
-  brufit_cols.push_back("F2");
-  brufit_cols.push_back("BHprefac");
-  brufit_cols.push_back("d4sigma");
+
+  auto cols = brufit_cols;
+
+  cols.push_back("UID");
+  cols.push_back("r");
+  cols.push_back("r2");
+  cols.push_back("beta");
+  cols.push_back("C0");
+  cols.push_back("C1");
+  cols.push_back("C2");
+  cols.push_back("b");
+  cols.push_back("a");
+  cols.push_back("L");
+  cols.push_back("A0");
+  cols.push_back("A1");
+  cols.push_back("A2");
+  cols.push_back("A3");
+  cols.push_back("A4");
+  cols.push_back("A5");
+  cols.push_back("B0");
+  cols.push_back("B1");
+  cols.push_back("B2");
+  cols.push_back("B3");
+  cols.push_back("A");
+  cols.push_back("B");
+  cols.push_back("F1");
+  cols.push_back("F2");
+  cols.push_back("BHprefac");
+  cols.push_back("d4sigma");
   
 
-  df_filt.Snapshot("tree",outfile,brufit_cols,opts);
+  df_filt.Snapshot("tree",outfile,cols,opts);
 
   std::cout << "Base events: " << *nstart << std::endl;
   std::cout << "Filtered events: " << *nsnap << std::endl;

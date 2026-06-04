@@ -62,10 +62,10 @@ void ProcessHEPMCTCSCombi(std::vector<std::string> infiles={"/w/work5/home/garyp
   auto topology_recipe = TCS_Exclusive_Topology<Processor>;
   
   // [B] REC-SPECIFIC CORRECTIONS
-  auto correction_recipe = TCS_Mass_Corrections;
+  //auto correction_recipe = TCS_Mass_Corrections;
     
   // [C] SELECTION CUTS
-  auto selection_recipe = TCS_Selection_Recipe;
+  //auto selection_recipe = TCS_Selection_Recipe;
   
   // [D] HISTOGRAMS
   auto histogram_recipe =  TCS_Histogram_Recipe;
@@ -74,8 +74,9 @@ void ProcessHEPMCTCSCombi(std::vector<std::string> infiles={"/w/work5/home/garyp
   //mgr.ConfigureKinematics(correction_recipe);
   //mgr.ConfigureSelection(selection_recipe);
   mgr.ConfigureHistograms(histogram_recipe);
-  
-  mgr.Snapshot();
+
+  rad_df.Define("impWeight","weights[4]");
+  mgr.Snapshot({"impWeight"});
 
   //Diagnostics helpers
   //rad::rdf::PrintParticles(rad_df, MC());

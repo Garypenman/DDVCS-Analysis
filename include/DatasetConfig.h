@@ -5,6 +5,11 @@
 
 #include "../include/Config.h"
 
+enum class BkgType {
+  None,
+  Exact1S_2us_GoldCt_5um
+};
+
 struct DatasetConfig {
   
   // User-provided identifiers
@@ -13,6 +18,7 @@ struct DatasetConfig {
   std::string helicity;
   std::string config;
   std::string campaign;
+  BkgType bkg;
   
   // Auto-generated metadata
   std::string xrdfsPath;
@@ -28,8 +34,9 @@ DatasetConfig(const std::string& reac,
 	      const std::string& dec,
 	      const std::string& hel,
 	      const std::string& cfg,
-	      const std::string& camp)
-: reaction(reac), decay(dec), helicity(hel), config(cfg), campaign(camp)
+	      const std::string& camp,
+	      BkgType bkg = BkgType::None)
+  : reaction(reac), decay(dec), helicity(hel), config(cfg), campaign(camp), bkg(bkg)
   {
     // PDG
     if (decay == "edecay" || decay == "ee") pdg = 11;
@@ -58,8 +65,13 @@ DatasetConfig(const std::string& reac,
     }
 
     // XRDFS path construction
-    std::string base = "/eic/EPIC/RECO/" + campaign +
-      "/epic_craterlake/EXCLUSIVE/";
+    std::string base = "/eic/EPIC/RECO/" + campaign + "/epic_craterlake/";
+    
+    if(bkg == BkgType::Exact1S_2us_GoldCt_5um){
+      base += "Bkg_Exact1S_2us/GoldCt/5um/";
+    }
+
+    base += "EXCLUSIVE/";
 
     if (reaction == "ddvcs") {
       xrdfsPath = base +

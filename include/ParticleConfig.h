@@ -5,18 +5,26 @@
 #include <cmath>
 #include <TString.h>
 
+#include "FiducialCuts.h"
+#include "DerivedObservable.h"
+
 //particle struct here
 struct ParticleConfig {
   std::string name;
   std::string title;
   std::string label;
   int pdg;
+
+  FiducialCuts fid;
   
   double acc = -1.0;      // integrated acceptance
   double acc_err = 0.0;   // optional binomial error
   double fidu_acc = -1.0; // integrated acceptance in fiducial cuts
   double fidu_acc_err = 0.0;
-  
+
+  //particle specific kinematics: Q2, |t|, etc.
+  std::vector<DerivedObservable> observables;
+
   // files (automatically set)
   std::string tru_filename;
   std::string rec_filename;
@@ -85,5 +93,13 @@ struct ParticleConfig {
     res_theta = "res_" + name + "_theta";
     res_phi   = "res_" + name + "_phi";
     res_eta   = "res_" + name + "_eta";
+  }
+
+  std::string TruthFiducialCut() const {
+    return fid.MakeCut(tru_p, tru_eta, tru_theta, tru_phi);
+  }
+  
+  std::string RecoFiducialCut() const {
+    return fid.MakeCut(rec_p, rec_eta, rec_theta, rec_phi);
   }
 };
