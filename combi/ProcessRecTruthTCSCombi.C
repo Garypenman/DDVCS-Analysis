@@ -241,7 +241,7 @@ void ProcessRecTruthTCSCombi(std::vector<std::string> infiles={""},
 
 //---Glob Overload---
 void ProcessRecTruthTCSCombi(const std::string& infile_glob,
-                             std::string outdir = test_out_dir,
+                             std::string outdir,
                              int BeamEle_idx = 0,
                              int BeamIon_idx = 3,
                              int Role_ScatEle = 2,
