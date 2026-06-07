@@ -16,10 +16,9 @@
 #include "../include/HistogramRecipes.h"
 #include "../include/SelectionRecipes.h"
 
-const std::string my_out_dir = "/w/work5/home/garyp/combirad_trees/HepMC_TCS_18x275_Phasespace";
 
-void ProcessHEPMCTCSCombi(std::vector<std::string> infiles={"/w/work5/home/garyp/phasespace/dilep_phsp_18_275_M1.5GeV.root"}, 
-			  std::string outdir = my_out_dir,
+void ProcessHEPMCTCSCombi(std::vector<std::string> infiles={""}, 
+			  std::string outdir = "./",
 			  const int beam_ele_idx = 0,
 			  const int beam_ion_idx = 1,
 			  const int Role_ScatEle  = 2, 
@@ -95,7 +94,7 @@ void ProcessHEPMCTCSCombi(std::vector<std::string> infiles={"/w/work5/home/garyp
 
 //---Glob Overload---
 void ProcessHEPMCTCSCombi(const std::string& infile_glob,
-			  std::string outdir = my_out_dir,
+			  std::string outdir,
 			  const int beam_ele_idx = 0,
 			  const int beam_ion_idx = 1,
 			  const int Role_ScatEle = 2,
@@ -119,7 +118,7 @@ void ProcessHEPMCTCSCombi(const std::string& infile_glob,
 }
 
 void ProcessElspectro(const std::string& infile_glob,
-		      std::string outdir = my_out_dir,
+		      std::string outdir,
 		      const int lep_PDG = 11)
 {
   auto infiles = GlobToVector(infile_glob);
@@ -137,7 +136,7 @@ void ProcessElspectro(const std::string& infile_glob,
 }
 
 void ProcessEpic(const std::string& infile_glob,
-		      std::string outdir = my_out_dir,
+		      std::string outdir,
 		      const int lep_PDG = 11)
 {
   auto infiles = GlobToVector(infile_glob);

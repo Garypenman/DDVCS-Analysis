@@ -22,7 +22,7 @@
 
 
 void ProcessRecTruthTCSCombi(std::vector<std::string> infiles={""}, 
-			     std::string outdir = test_out_dir,
+			     std::string outdir = "./",
 			     const int BeamEle_idx = 0,
 			     const int BeamIon_idx = 3,
 			     const int Role_ScatEle  = 2,
