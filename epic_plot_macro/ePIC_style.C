@@ -32,6 +32,8 @@ TStyle* ePIC_style()
   ePIC_style->SetTitleYOffset(1.1);
   ePIC_style->SetTitleOffset(1.1,"z"); // Set the offset for Z axis titles expliticly to avoid it being cut off
 
+  ePIC_style->SetOptTitle(0);
+  
   // use large fonts
   //Int_t font=72; // Helvetica italics
   const Int_t g_font = 42; // Helvetica
