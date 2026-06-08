@@ -52,6 +52,8 @@
 
 # fitting output
 fitting/*.root
+fitting/fit_out
+fitting/toys_test/
 
 # temporary files
 *~
