@@ -49,6 +49,7 @@
 *.pdf
 *.png
 *.dot
+*.root
 
 # fitting output
 fitting/*.root
