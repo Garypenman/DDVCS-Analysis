@@ -1,0 +1,3 @@
+root -q /home/gp140f/brufit/macros/LoadBru.C FitThetaPhi.C
+root MakeFitResultPDF.C
+evince TCSFitResults.pdf
