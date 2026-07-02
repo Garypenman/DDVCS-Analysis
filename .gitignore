@@ -50,6 +50,7 @@
 *.png
 *.dot
 *.root
+combi/results/
 
 # fitting output
 fitting/*.root
