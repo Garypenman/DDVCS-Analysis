@@ -1,4 +1,4 @@
-void MakeFitResultPDF(){
+void MakeFitResultPDF(std::string outfile = "TCSFitResults.pdf"){
 
   std::string filename = "fit_out/ResultsBruMcmcCovariance.root";
   TFile *f = new TFile(filename.c_str(),"OPEN");
@@ -34,7 +34,7 @@ void MakeFitResultPDF(){
   gPad->SetLogy();
   //gPad->Print("temp06.pdf");
   
-  gSystem->Exec("pdfunite temp*.pdf TCSFitResults.pdf");
+  gSystem->Exec(Form("pdfunite temp*.pdf %s",outfile.c_str()));
   gSystem->Exec("rm temp*.pdf");
   gApplication->Terminate();
 }

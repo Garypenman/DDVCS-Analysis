@@ -1,50 +1,54 @@
 #pragma once
-#include "Model.C"
-#include "ModelV2.C"
+#include "ModelSimple.C"
+#include "ModelBH.C"
+#include "ModelFull.C"
 
-void FitThetaPhi(TString filebase = "t1", Int_t modelID=2){
-
+void FitThetaPhi(//Data File
+		 TString datafile  = "/w/work6/home/gp140f/combirad_trees/10x100_ddvcs_ee_bhonly_hplus/TCS_mc_Tree.root",
+		 //Phasespace File
+		 TString sigfile = "/w/work6/home/gp140f/phasespace/trees/dilep_phsp_10_100_b5_10M//TCS_mc_Tree_brufit.root",
+		 //0=Simple, 1=BH, 2=Full
+		 Int_t modelID=1)
+{
+  
   
   /****************************************/
   /***************Filenames****************/    
   /****************************************/
-  TString signalfiledir = "HepMC_TCS_10x100_Phasespace";
-  TString outdir = "fit_out/";
-
-  if(filebase=="")
-    signalfiledir += "/";
-  else
-    signalfiledir += "_" + filebase + "/";
-
+  
+  
+  //10x100 BH only is macro default
   //10x100 full epic
   //TString datafile  = "/w/work6/home/gp140f/combirad_trees/HepMC_TCS_10x100_hplus/TCS_mc_Tree.root";
-  //10x100 BH only
-  TString datafile  = "/w/work6/home/gp140f/combirad_trees/HepMC_TCS_10x100_BHONLY_hplus/TCS_mc_Tree.root";
-
+  
   //phasespace file
-  TString sigfile = "/w/work6/home/gp140f/combirad_trees/"+signalfiledir+"TCS_mc_Tree_brufit.root";
   //sigfile = "../hepmc/TCSPhaseSpace.root";
   /****************************************/
   /************Create FitManager***********/    
   /****************************************/
   FitManager fm;
-  fm.SetUp().SetOutDir(outdir);
+  std::string outdir;
   // fm.SetUp().SetIDBranchName("UID");
   
   /****************************************/
   /***********Apply Dilepton model**********/    
   /****************************************/
-  if(modelID==0){ //simple TCS toy model, ModelV0.C TBD
-    //ModelV0(fm);
-  }else if(modelID==1){ //F1,F1 full BH, need rename
-      Model(fm);
-    }else if(modelID==2){ // alpha mixing BH
-      ModelV2(fm);
-    }else{ //add more as needed
+  if(modelID==0){ // Simple TCS toy model
+    ModelSimple(fm);
+    outdir = "fit_simple";
+  }else if(modelID==1){ // BH Only, alpha mixing for F1,F2
+    ModelBH(fm);
+    outdir = "fit_bh";
+  }else if(modelID==2){ // Full BH+TCS+INT - TBD
+    ModelFull(fm);
+    outdir = "fit_full";
+  }else{ //add more as needed
     std::cout << "No matching fit model ID" << endl;
     exit(1);
   }
 
+  fm.SetUp().SetOutDir(outdir);
+  
   /**************************************************/  
   /********************Make bins*********************/ 
   /**************************************************/
@@ -57,9 +61,7 @@ void FitThetaPhi(TString filebase = "t1", Int_t modelID=2){
   /**************************************************/
 
   fm.LoadData("tree",datafile);
-  //fm.LoadData("tree",sigfile);
   //"Dilepton" is given in Model.C as name of the RooComponentsPDF
-  //fm.LoadSimulated("tree",datafile,"Dilepton");
   fm.LoadSimulated("tree",sigfile,"Dilepton");
 
   /**************************************************/

@@ -1,4 +1,4 @@
-void Model(FitManager& fm, Int_t Nevents=1){
+void ModelSimple(FitManager& fm, Int_t Nevents=1){
 
 
   /****************************************/
@@ -50,5 +50,5 @@ void Model(FitManager& fm, Int_t Nevents=1){
   fm.SetUp().LoadSpeciesPDF("Dilepton",Nevents);
 }
 
-void Model(){
+void ModelSimple(){
 }

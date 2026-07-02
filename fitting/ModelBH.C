@@ -1,4 +1,4 @@
-void ModelV2(FitManager& fm, Int_t Nevents=10000){
+void ModelBH(FitManager& fm, Int_t Nevents=10000){
 
 
   /****************************************/
@@ -159,5 +159,5 @@ void ModelV2(FitManager& fm, Int_t Nevents=10000){
   fm.SetUp().LoadSpeciesPDF("Dilepton",Nevents);
 }
 
-void ModelV2(){
+void ModelBH(){
 }

@@ -1,3 +1,4 @@
 root -q /home/gp140f/brufit/macros/LoadBru.C FitThetaPhi.C
-root MakeFitResultPDF.C
+outpdf="TCSFitResults_BHONLY.pdf"
+root 'MakeFitResultPDF.C("'$outpdf'")'
 evince TCSFitResults.pdf
