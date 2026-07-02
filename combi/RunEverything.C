@@ -115,8 +115,16 @@ void RunCampaignTest(){
   auto bg = DatasetConfig("ddvcs","edecay","hplus","18x275","26.02.0",
 			  BkgType::Exact1S_2us_GoldCt_5um);
 
+  auto april_p = DatasetConfig("ddvcs","edecay","hplus","10x130","26.04.1",
+			       BkgType::None);
+  auto april_m = DatasetConfig("ddvcs","edecay","hminus","10x130","26.04.1",
+			       BkgType::None);
+
   //RunCampaignFilesCombi(nobg, 10, false, test_out);
-  RunCampaignFilesCombi(bg, 1000, false, test_out);
+  //RunCampaignFilesCombi(bg, 1000, false, test_out);
+
+  RunCampaignFilesCombi(april_p, -1, false);
+  RunCampaignFilesCombi(april_m, -1, false);
   
   //};
 

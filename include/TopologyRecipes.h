@@ -22,6 +22,7 @@ auto TCS_Exclusive_Topology = [](Processor& p) {
   p.Creator().Diff("miss",    {{BeamEle(),BeamIon()},{ScatEle(), "gprime", "pprime"}});
   p.Creator().Diff("miss",    {{BeamEle(),BeamIon()},{ScatEle(), "gprime", "pprime"}});
   p.Creator().Diff("miss_hadro",    {{BeamEle(),BeamIon()},{ScatEle()}});
+  p.Creator().Diff("miss_scatele",    {{BeamEle(),BeamIon()},{"gprime", "pprime"}});
   p.Creator().Diff("miss_pprime",    {{BeamEle(),BeamIon()},{ScatEle(), "gprime"}});
   p.Creator().Diff("delta",{{BeamIon()},{"pprime"}});
   
@@ -86,6 +87,17 @@ auto TCS_Exclusive_Topology = [](Processor& p) {
   
   //5. Misc Kinematics Variables for cuts etc
   p.RegisterCalc("DeltaPhiProton", rad::DeltaPhi,{{"pprime","miss_pprime"}});
+  p.RegisterCalc("DeltaThetaProton", rad::DeltaTheta,{{"pprime","miss_pprime"}});
+  p.RegisterCalc("DeltaPProton", rad::DeltaP,{{"pprime","miss_pprime"}});
+
+  p.RegisterCalc("DeltaPhiScatEle", rad::DeltaPhi,{{"scat_ele","miss_scatele"}});
+  p.RegisterCalc("DeltaThetaScatEle", rad::DeltaTheta,{{"scat_ele","miss_scatele"}});
+  p.RegisterCalc("DeltaPScatEle", rad::DeltaP,{{"scat_ele","miss_scatele"}});
+
+  p.RegisterCalc("DeltaPhiExP", rad::DeltaPhi,{{"scat_ele","pprime"}});
+  p.RegisterCalc("DeltaPhiExG", rad::DeltaPhi,{{"scat_ele","gprime"}});
+  p.RegisterCalc("DeltaPhiGxP", rad::DeltaPhi,{{"gprime","pprime"}});
+
   p.Energy("GammaE", {VirtGamma()});
     
   //6. Particle Basic Observables
