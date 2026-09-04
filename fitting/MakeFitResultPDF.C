@@ -1,6 +1,6 @@
 void MakeFitResultPDF(std::string outfile = "TCSFitResults.pdf"){
 
-  std::string filename = "fit_out/ResultsBruMcmcCovariance.root";
+  std::string filename = "fit_bh/ResultsBruMcmcCovariance.root";
   TFile *f = new TFile(filename.c_str(),"OPEN");
   
   TCanvas *pad_theta = (TCanvas*) f->Get("_mc_CosThetaHel");
