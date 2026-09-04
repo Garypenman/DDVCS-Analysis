@@ -1,5 +1,5 @@
 #include "../Ye_Fit_Data/GetFF.C"
-#include "/home/gp140f/SBS-Analysis/GEn/src/TheoryFunctions.cxx"
+#include "/home/gp140f/SBS/SBS-Analysis/GEn/src/TheoryFunctions.cxx"
 
 struct FormFactors{
   double q2;

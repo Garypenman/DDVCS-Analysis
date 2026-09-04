@@ -27,6 +27,8 @@ void ProcessHEPMCTCSCombi(std::vector<std::string> infiles={""},
 			  const int Role_DecayPos = 5, 
 			  const int lep_PDG = 11) 
 {
+  ROOT::EnableImplicitMT(8);
+  
   using namespace rad;
   using namespace rad::consts::data_type; 
 
