@@ -11,7 +11,8 @@ void SnapshotBrufit(std::string infile = "/w/work6/home/gp140f/combirad_trees/He
       return (s-Qp2-M2)*(s-Qp2-M2) - 4*Qp2*M2;
     },{"mc_s_photo","mc_Qp2"});
 
-  df_new0 = df_new0.Define("UID","rdfentry_");
+  df_new0 = df_new0.Define("UID","(double)rdfentry_");
+  df_new0 = df_new0.Define("BruWeight","1.0/impWeight");
   
   auto df_new = df_new0.Filter("r2>0")
     .Define("r", [] (double r2){
@@ -139,6 +140,7 @@ void SnapshotBrufit(std::string infile = "/w/work6/home/gp140f/combirad_trees/He
   auto cols = brufit_cols;
 
   cols.push_back("UID");
+  cols.push_back("BruWeight");
   cols.push_back("r");
   cols.push_back("r2");
   cols.push_back("beta");
