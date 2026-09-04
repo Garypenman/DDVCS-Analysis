@@ -1,92 +1,20 @@
 #include "../include/Config.h"
+#include "../include/DrawHelperFuncs.h"
 #include "../include/DrawEpicInfo.h"
 
 #include "../epic_plot_macro/ePIC_style.C"
 
-const std::vector<EColor> kp6 = {kP6Violet, kP6Gray, kP6Grape, kP6Red, kP6Yellow, kP6Blue};
+std::string file1 = "/w/work6/home/gp140f/tcs_bg_merge/bg_rad/";
+std::string outdir1 = "./results/BGMerge/9x130/hplus";
 
+std::string file2 = "/w/work6/home/gp140f/combirad_trees/epic/9x130_ddvcs_ee_hplus/";
+std::string outdir2 = "./results/july/9x130/hplus/";
 
-void DrawOneSplitTwo(TH1D* all, TH1D* h1, TH1D* h2){
-  
-  all->SetLineColor(kBlack);
-  //h1->SetLineColor(0);
-  h1->SetFillColorAlpha(kp6[0],0.8);
-  h1->SetFillStyle(3004);
-  //h2->SetLineColor(0);
-  h2->SetFillColorAlpha(kp6[1],0.8);
-  h2->SetFillStyle(3005);
-  //all->SetMaximum(1.25*all->GetMaximum());
-  all->DrawCopy("hist p");
-  h1->DrawCopy("same");
-  h2->DrawCopy("same");
-  
-}
-
-
-TH1D* AcceptancePlot(TH1D* tru, TH1D* rec, std::string name){
-
-  TH1D* acc = (TH1D*)rec->Clone(name.c_str());
-  acc->Divide(tru);
-  acc->SetMinimum(0);
-  acc->SetMaximum(1);
-  acc->GetYaxis()->SetTitle("Acceptance");
-  acc->SetMarkerStyle(7);
-  return acc;
-  
-}
-
-
-TH1D* XSecPlot(TH1D* h, double scale, std::string name, TH1D* acc=nullptr){
-
-  TH1D* sig = (TH1D*)h->Clone(name.c_str());
-  if(!(acc==nullptr)) sig->Divide(acc);
-  sig->Scale(scale,"width");
-  
-  return sig;
-
-}
-
-void DrawCutLine(const std::string& cut_expr,
-                 double ymin, double ymax)
+void ExclusiveAnalysis(std::string infiledir = file1,
+		       std::string outfiledir = outdir1, 
+		       int ebeam = 9, int pbeam = 130,
+		       std::string helicity = "hplus", std::string fcampaign="26.07.1")
 {
-  // Extract number from expression (simple parsing)
-  double cut_val = 0;
-
-  if (cut_expr.find("<") != std::string::npos) {
-    cut_val = std::stod(cut_expr.substr(cut_expr.find("<") + 1));
-  }
-
-  // +cut
-  TLine *line1 = new TLine(cut_val, ymin, cut_val, ymax);
-  line1->SetLineColor(kGreen+2);
-  line1->SetLineWidth(2);
-  line1->SetLineStyle(2);
-  line1->Draw();
-
-  // -cut (for abs variables)
-  if (cut_expr.find("abs") != std::string::npos) {
-    TLine *line2 = new TLine(-cut_val, ymin, -cut_val, ymax);
-    line2->SetLineColor(kGreen+2);
-    line2->SetLineWidth(2);
-    line2->SetLineStyle(2);
-    line2->Draw();
-  }
-}
-
-// later wrapper this stuff in RunEverything.C
-// std::string plus_dir = "/w/work6/home/gp140f/combirad_trees/Campaign26.03.1/ddvcs_ee_18x275_hplus/";
-// std::string minus_dir = "/w/work6/home/gp140f/combirad_trees/Campaign26.03.1/ddvcs_ee_18x275_hminus/";
-// std::string result_dir = "./results/Campaign26.03.1/ddvcs_ee_18x275_hplus/"
-
-// std::string plus_dir = "/w/work6/home/gp140f/combirad_trees/Campaign26.04.1/ddvcs_ee_9x130_hplus/";
-// std::string minus_dir = "/w/work6/home/gp140f/combirad_trees/Campaign26.04.1/ddvcs_ee_9x130_hminus/";
-// std::string result_dir = "./results/Campaign26.04.1/ddvcs_ee_9x130_hplus/"
-
-std::string bg_dir = "/w/work6/home/gp140f/tcs_bg_merge/bg_rad/";
-std::string nobg_dir = "/w/work6/home/gp140f/tcs_bg_merge/nobg_rad/";
-std::string result_dir = "./results/BGMerge/9x130";
-
-void ExclusiveAnalysis(std::string infiledir = bg_dir, std::string outfiledir = result_dir, int ebeam = 9, int pbeam = 130, std::string fcampaign="26.04.1"){
 
   set_ePIC_style();
 
@@ -106,9 +34,10 @@ void ExclusiveAnalysis(std::string infiledir = bg_dir, std::string outfiledir = 
   // ----------------------------------------------------------
   // Files
   // ----------------------------------------------------------
-  std::string tru_filename = infiledir + "TCS_tru_Tree.root";
-  std::string rec_filename = infiledir + "TCS_all_rec_Tree.root";
-  std::string outfilename = "TCS_"+Eset+"_exclusive_analysis.root";
+  std::string tru_filename = infiledir + "/TCS_tru_Tree.root";
+  std::string rec_filename = infiledir + "/TCS_all_rec_Tree.root";
+  gSystem->Exec(("mkdir -p "+outfiledir).c_str());
+  std::string outfilename = outfiledir+"/TCS_"+Eset+"_exclusive_analysis.root";
   TFile fout(outfilename.c_str(), "RECREATE");
   
   // ----------------------------------------------------------
@@ -135,7 +64,13 @@ void ExclusiveAnalysis(std::string infiledir = bg_dir, std::string outfiledir = 
   // Dataframes
   // ----------------------------------------------------------
   ROOT::RDataFrame df_tru("tree", tru_filename);
-  ROOT::RDataFrame df_rec("tree", rec_filename);
+  ROOT::RDataFrame df_rec_base("tree", rec_filename);
+  auto df_rec = df_rec_base
+    .Define("rec_scatele_pprime_tcoin",
+	    [](double tele, double tprot){
+	      return tele - tprot;
+	    },{"rec_scat_ele_track_time", "rec_pprime_rphits_timeavg"});
+  
   auto df_sig = df_rec.Filter("isTruth==1 && rec_ele_eta > -4 && rec_pos_eta > -4");
   auto df_bg  = df_rec.Filter("isTruth!=1 && rec_ele_eta > -4 && rec_pos_eta > -4");
 
@@ -149,14 +84,15 @@ void ExclusiveAnalysis(std::string infiledir = bg_dir, std::string outfiledir = 
     int nbins;
     double xmin;
     double xmax;
-    bool use_abs;       
+    bool use_cut;       
     std::string cut_expr;  // filled later
   };
   
   std::vector<ExclVar> vars = {
     {"M^{2}_{miss}", "rec_MissMass2", 250, -15, 15, true, ""},
     {"P_{T,miss}",    "rec_MissPt",    250, 0,   2.0, false, ""},
-    {"#delta#phi_{p'}",  "rec_DeltaPhiProton", 250, -3.2, 3.2, true, ""}
+    {"#delta#phi_{p'}",  "rec_DeltaPhiProton", 250, -3.2, 3.2, true, ""},
+    {"", "", 250,}
     //{"MissPhi",   "rec_MissPhi",   250, -3.2, 3.2, true, ""},
     //{"MissTheta", "rec_MissTheta", 250, 0,   0.1, false, ""}
   };
@@ -343,24 +279,20 @@ void ExclusiveAnalysis(std::string infiledir = bg_dir, std::string outfiledir = 
       other_cuts += "(" + vars[j].cut_expr + ")";
     }
     
-    hists.push_back(
-		    df_sig.Filter(other_cuts).Histo1D(
-						      {("h_"+vars[i].name+"_sig_post").c_str(),
-						       (vars[i].name+";"+vars[i].name+";Events").c_str(),
-						       vars[i].nbins, vars[i].xmin, vars[i].xmax},
-						      vars[i].branch)
-		    );
+    hists.push_back(df_sig.Filter(other_cuts).Histo1D({("h_"+vars[i].name+"_sig_post").c_str(),
+	  (vars[i].name+";"+vars[i].name+";Events").c_str(),
+	  vars[i].nbins, vars[i].xmin, vars[i].xmax},
+	vars[i].branch)
+      );
     
-    hists.push_back(
-		    df_bg.Filter(other_cuts).Histo1D(
-						     {("h_"+vars[i].name+"_bg_post").c_str(),
-						      (vars[i].name+";"+vars[i].name+";Events").c_str(),
-						      vars[i].nbins, vars[i].xmin, vars[i].xmax},
-						     vars[i].branch)
-		    );
+    hists.push_back(df_bg.Filter(other_cuts).Histo1D({("h_"+vars[i].name+"_bg_post").c_str(),
+	  (vars[i].name+";"+vars[i].name+";Events").c_str(),
+	  vars[i].nbins, vars[i].xmin, vars[i].xmax},
+	vars[i].branch)
+      );
     
   }
-
+  
   // ----------------------------------------------------------
   // 4. Draw histos with all other cuts applied
   // ----------------------------------------------------------
@@ -508,7 +440,7 @@ void ExclusiveAnalysis(std::string infiledir = bg_dir, std::string outfiledir = 
   leg_tbot->Draw();
   gPad->Update();
   gPad->Print("hdNdt.pdf");
-  gPad->Print("hdNdt.C");
+  gPad->Print("hdNdt.png");
   gPad->Write();
   //gPad->Close();
   
@@ -570,7 +502,7 @@ void ExclusiveAnalysis(std::string infiledir = bg_dir, std::string outfiledir = 
   leg_Qp2->Draw();
   gPad->Update();
   gPad->Print("hdNQp2.pdf");
-  gPad->Print("hdNQp2.C");
+  gPad->Print("hdNQp2.png");
   gPad->Write();
   //gPad->Close();
   
@@ -610,7 +542,7 @@ void ExclusiveAnalysis(std::string infiledir = bg_dir, std::string outfiledir = 
   leg_CosThetaHel->Draw();
   gPad->Update();
   gPad->Print("hdNCosThetaHel.pdf");
-  gPad->Print("hdNCosThetaHel.C");
+  gPad->Print("hdNCosThetaHel.png");
   gPad->Write();
   //gPad->Close();
   
@@ -650,39 +582,12 @@ void ExclusiveAnalysis(std::string infiledir = bg_dir, std::string outfiledir = 
   leg_PhiHel->Draw();
   gPad->Update();
   gPad->Print("hdNPhiHel.pdf");
-  gPad->Print("hdNPhiHel.C");
+  gPad->Print("hdNPhiHel.png");
   gPad->Write();
   //gPad->Close();
 
   fout.Write();
   fout.Close();
-  gSystem->Exec( Form("mv h*.pdf h*.C TCS*.root %s",outfiledir.c_str()) );
+  gSystem->Exec( Form("mv *.pdf *.png %s",outfiledir.c_str()) );
 }
-
-
-// // Exclusivity (truth = zero, tru comes from tru rec event flag)
-  // auto hrec_MissMass2_bg = df_bg.Histo1D({"hrec_MissMass2","All Brem BG Combis; M^{2}_{miss} (e' e^{+}e^{-} p') [GeV^{2}/c^{2}]; Events / 0.12 GeV/c",250,-15,15},"rec_MissMass2");
-  // auto hrec_MissMass2_tru = df_sig.Histo1D({"hrec_MissMass2_tru","Truth Events",250,-15,15},"rec_MissMass2");
-  // auto hrec_MissMass2_cut = df_rec.Filter((miss_pt_cut).GetTitle()).Histo1D({"hrec_MissMass2","BG+Cuts",250,-15,15},"rec_MissMass2");
-  // auto hrec_MissMass2_tru_cut = df_rec.Histo1D({"hrec_MissMass2","BG+Cuts",250,-15,15},"rec_MissMass2");
-  
-  // auto hrec_MissPt = df_rec.Histo1D({"hrec_MissPt","All Brem BG Combis; p_{T,miss} (e' e^{+}e^{-} p') [GeV/c]; Events / 0.12 GeV/c",250,0,2.0},"rec_MissPt");
-  // auto hrec_MissPt_tru = df_rec_tru.Histo1D({"hrec_MissPt_tru","Truth Events",250,0,2.0},"rec_MissPt");
-  // auto hrec_MissPt_cut = df_rec_cut.Histo1D({"hrec_MissPt","All Brem BG Combis",250,0,2.0},"rec_MissPt");
-
-  // new TCanvas();
-  // //hrec_MissMass2->Fit("gaus","");
-  // hrec_MissMass2->SetMinimum(0);
-  // hrec_MissMass2->DrawCopy();
-  // hrec_MissMass2_tru->SetLineColor(kRed);
-  // hrec_MissMass2_tru->DrawCopy("same");
-  // //gPad->SetLogy();
-  // gPad->BuildLegend(0.15,0.7,0.35,0.8);
-
-  // new TCanvas();
-  // //hrec_MissPt->Fit("gaus","");
-  // hrec_MissPt->SetMinimum(0);
-  // hrec_MissPt->DrawCopy();
-  // hrec_MissPt_tru->SetLineColor(kRed);
-  // hrec_MissPt_tru->DrawCopy("same");
   
